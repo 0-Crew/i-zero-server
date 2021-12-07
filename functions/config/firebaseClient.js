@@ -2,7 +2,7 @@ const { initializeApp } = require('firebas/app');
 const { getAuth } = require('firebase/auth');
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyDkn5wayZXr849Hg2vUMRWsKOcCPY-htlE',
+  apiKey: process.env.API_KEY,
   authDomain: 'washyourbottle.firebaseapp.com',
   projectId: 'washyourbottle',
   storageBucket: 'washyourbottle.appspot.com',
