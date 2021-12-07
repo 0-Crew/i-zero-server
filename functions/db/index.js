@@ -1,3 +1,9 @@
 module.exports = {
-  testDB: require('./test'),
+  userDB: require('./user'),
+  myChallengeDB: require('./myChallengeDB'),
+  convenienceDB: require('./convenienceDB'),
+  myInconvenienceDB: require('./myInconvenienceDB'),
+  myFollowingDB: require('./myFollowingDB'),
+  notificationDB: require('./notificationDB'),
+  myNotification: require('./myNotification'),
 };
