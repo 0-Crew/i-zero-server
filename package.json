@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "devport": "cross-env NODE_ENV=development firebase serve -p 5001 --only"
+  },
+  "dependencies": {
+    "dayjs": "^1.10.7",
+    "lodash": "^4.17.21",
+    "numeral": "^2.0.6"
+  }
+}

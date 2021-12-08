@@ -17,9 +17,9 @@ const jwtHandlers = require('../../../lib/jwtHandlers');
 */
 
 module.exports = async (req, res) => {
-  const { email, sns_id, provider } = req.body;
+  const { email, snsId, provider } = req.body;
 
-  if (!email || !sns_id || !provider) {
+  if (!email || !snsId || !provider) {
     return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
   }
 
@@ -48,14 +48,14 @@ module.exports = async (req, res) => {
 
     //RDS DB에 유저를 생성한다
     const idFirebase = userFirebase.uid;
-    const user = await userDB.addUser(client, email, sns_id, provider, idFirebase);
+    const user = await userDB.addUser(client, email, snsId, provider, idFirebase);
 
     // JWT access token 발급
-    const { accesstoken } = jwtHandlers.sign(user.idFirebase);
+    const { accesstoken } = jwtHandlers.sign(user);
 
     res.status(statusCode.OK).send(
       util.success(statusCode.OK, responseMessage.READ_USER_SUCCESS, {
-        exist,
+        user,
       }),
     );
   } catch (error) {
