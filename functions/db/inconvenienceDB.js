@@ -1,13 +1,14 @@
 const _ = require('lodash');
 const convertSnakeToCamel = require('../lib/convertSnakeToCamel');
 
-const getConveniences = async (client) => {
+const getInonveniences = async (client) => {
   const { rows } = await client.query(
     `
-    SELECT * FROM convenience
+    SELECT * FROM inconvenience
     `,
   );
 
   return convertSnakeToCamel.keysToCamel(rows);
 };
-module.exports = { getConveniences };
+
+module.exports = { getInonveniences };

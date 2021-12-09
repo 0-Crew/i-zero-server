@@ -4,18 +4,22 @@ const dayjs = require('dayjs');
 const numeral = require('numeral');
 
 const db = require('../../../db/db');
+const { convenienceDB, inconvenienceDB } = require('../../../db');
 
 module.exports = async (req, res) => {
-  const { schoolId } = req.body;
-  if (!schoolId) return res.status(404).json({ err: true, userMessage: 'Not enough parameters.' });
+  const {} = req.body;
 
   let client;
 
   try {
     client = await db.connect(req);
+    const convenience = await convenienceDB.getConveniences(client);
+    const inconvenience = await inconvenienceDB.getInconveniences(client);
 
     res.status(200).json({
       err: false,
+      convenience,
+      inconvenience,
     });
   } catch (error) {
     functions.logger.error(`[ERROR] [${req.method.toUpperCase()}] ${req.originalUrl}`, `[CONTENT] ${error}`);
