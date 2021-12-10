@@ -30,9 +30,11 @@ module.exports = async (req, res) => {
     const isExist = await userDB.getUserBySnsIdAndProvider(client, snsId, provider);
     let idFirebase;
     let user;
+
     // 처음 로그인 시도를 하는 유저
     // RDS DB에 유저가 없다면 회원가입을 시킨다.
     if (!isExist) {
+      console.log('not exist!!!!!!!');
       // Firebase Authentication을 통해 유저를 생성!!
       const userFirebase = await admin
         .auth()
@@ -50,18 +52,21 @@ module.exports = async (req, res) => {
           return res.status(statusCode.INTERNAL_SERVER_ERROR).json(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
         }
       }
-
       //RDS DB에 유저를 생성한다
       idFirebase = userFirebase.uid;
       user = await userDB.addUser(client, email, snsId, provider, idFirebase);
+    } else {
+      //이미 회원가입한 유저라면?
+      idFirebase = isExist.idFirebase;
+      user = isExist;
     }
-
-    //이미 회원가입한 유저라면?
-    // idFirebase =
 
     // JWT access token 발급
     const { accesstoken } = jwtHandlers.sign(user);
 
+    if (!user.name) {
+      return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CREATED_USER, { accesstoken }));
+    }
     res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.READ_USER_SUCCESS, { accesstoken }));
   } catch (error) {
     functions.logger.error(`[ERROR] [${req.method.toUpperCase()}] ${req.originalUrl}`, `[CONTENT] ${error}`);
