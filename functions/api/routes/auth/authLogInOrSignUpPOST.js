@@ -34,7 +34,6 @@ module.exports = async (req, res) => {
     // 처음 로그인 시도를 하는 유저
     // RDS DB에 유저가 없다면 회원가입을 시킨다.
     if (!isExist) {
-      console.log('not exist!!!!!!!');
       // Firebase Authentication을 통해 유저를 생성!!
       const userFirebase = await admin
         .auth()
