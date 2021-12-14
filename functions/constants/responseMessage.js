@@ -7,6 +7,7 @@ module.exports = {
   DELETE_USER: '회원 탈퇴 성공',
   ALREADY_EMAIL: '이미 사용중인 이메일입니다.',
   LENGTH_LIMIT_FAIL: '글자수는 1~6자 사이여야 합니다.',
+  ALREADT_NAME: '해당 이름을 가진 유저가 이미 있습니다.',
 
   // 로그인
   LOGIN_SUCCESS: '로그인 성공',

@@ -21,19 +21,21 @@ module.exports = async (req, res) => {
   if (!name) {
     return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
   }
-
   let client;
 
   try {
     client = await db.connect(req);
     const isExistName = await userDB.checkUserName(client, name);
     if (isExistName) {
-      return res.status(statusCode.NO_CONTENT).json(util.fail(statusCode.NO_CONTENT, '해당 이름을 가진 유저가 이미 있습니다.'));
+      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.ALREADT_NAME));
     } else {
-      const setName = await userDB.setUserName(client, name, user.id);
-      console.log('setName : ', setName);
+      const setName = await userDB.setUserName(client, name, user.idFirebase);
+
+      if (!setName) {
+        return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NO_USER));
+      }
+      return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.SET_USER_NAME_SUCCESS));
     }
-    return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.SET_USER_NAME_SUCCESS));
   } catch (error) {
     functions.logger.error(`[ERROR] [${req.method.toUpperCase()}] ${req.originalUrl}`, `[CONTENT] ${error}`);
     console.log(error);

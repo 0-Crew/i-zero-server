@@ -53,7 +53,7 @@ const setUserName = async (client, name, idFirebase) => {
     /*sql*/ `
     UPDATE "user"
     SET "name" = $1
-    WHERE user.id_firebase = $2
+    WHERE "user".id_firebase = $2
     AND is_deleted = false
     RETURNING *
     `,
