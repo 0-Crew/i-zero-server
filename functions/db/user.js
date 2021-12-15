@@ -20,7 +20,47 @@ const addUser = async (client, email, snsId, provider, idFirebase) => {
     [email, snsId, provider, idFirebase],
   );
 
-  return convertSnakeToCamel.keysToCamel(rows);
+  return convertSnakeToCamel.keysToCamel(rows[0]);
+};
+
+const getUserBySnsIdAndProvider = async (client, snsId, provider) => {
+  const { rows } = await client.query(
+    `
+    SELECT * FROM "user"
+    WHERE sns_id = $1
+    AND provider = $2
+    AND is_deleted = false
+    `,
+    [snsId, provider],
+  );
+  return convertSnakeToCamel.keysToCamel(rows[0]);
+};
+
+const checkUserName = async (client, name) => {
+  const { rows } = await client.query(
+    `
+    SELECT u.name FROM "user" u
+    WHERE name = $1
+    AND is_deleted = false
+    `,
+    [name],
+  );
+  return convertSnakeToCamel.keysToCamel(rows[0]);
+};
+
+const setUserName = async (client, name, idFirebase) => {
+  const { rows } = await client.query(
+    /*sql*/ `
+    UPDATE "user"
+    SET "name" = $1
+    WHERE "user".id_firebase = $2
+    AND is_deleted = false
+    RETURNING *
+    `,
+    [name, idFirebase],
+  );
+
+  return convertSnakeToCamel.keysToCamel(rows[0]);
 };
 
 const getUserById = async (client, userId) => {
@@ -44,4 +84,4 @@ const getUserByIdFirebase = async (client, idFirebase) => {
   return convertSnakeToCamel.keysToCamel(rows[0]);
 };
 
-module.exports = { getTest, getUserByIdFirebase, getUserById, addUser };
+module.exports = { getTest, getUserBySnsIdAndProvider, getUserByIdFirebase, getUserById, addUser, checkUserName, setUserName };

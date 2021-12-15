@@ -27,37 +27,46 @@ module.exports = async (req, res) => {
 
   try {
     client = await db.connect(req);
+    const isExist = await userDB.getUserBySnsIdAndProvider(client, snsId, provider);
+    let idFirebase;
+    let user;
 
-    // Firebase Authentication을 통해 유저를 생성!!
-    const userFirebase = await admin
-      .auth()
-      .createUser({ email })
-      .then((user) => user)
-      .catch((e) => {
-        console.log(e);
-        return { err: true, error: e };
-      });
-
-    if (userFirebase.err) {
-      if (userFirebase.error.code === 'auth/email-already-exists') {
-        return res.status(statusCode.NOT_FOUND).json(util.fail(statusCode.NOT_FOUND, '해당 이메일을 가진 유저가 이미 있습니다.'));
-      } else {
-        return res.status(statusCode.INTERNAL_SERVER_ERROR).json(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
+    // 처음 로그인 시도를 하는 유저
+    // RDS DB에 유저가 없다면 회원가입을 시킨다.
+    if (!isExist) {
+      // Firebase Authentication을 통해 유저를 생성!!
+      const userFirebase = await admin
+        .auth()
+        .createUser({ email })
+        .then((user) => user)
+        .catch((e) => {
+          console.log(e);
+          return { err: true, error: e };
+        });
+      // error handling (거의 없을듯)
+      if (userFirebase.err) {
+        if (userFirebase.error.code === 'auth/email-already-exists') {
+          return res.status(statusCode.NOT_FOUND).json(util.fail(statusCode.NOT_FOUND, '해당 이메일을 가진 유저가 이미 있습니다.'));
+        } else {
+          return res.status(statusCode.INTERNAL_SERVER_ERROR).json(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
+        }
       }
+      //RDS DB에 유저를 생성한다
+      idFirebase = userFirebase.uid;
+      user = await userDB.addUser(client, email, snsId, provider, idFirebase);
+    } else {
+      //이미 회원가입한 유저라면?
+      idFirebase = isExist.idFirebase;
+      user = isExist;
     }
-
-    //RDS DB에 유저를 생성한다
-    const idFirebase = userFirebase.uid;
-    const user = await userDB.addUser(client, email, snsId, provider, idFirebase);
 
     // JWT access token 발급
     const { accesstoken } = jwtHandlers.sign(user);
 
-    res.status(statusCode.OK).send(
-      util.success(statusCode.OK, responseMessage.READ_USER_SUCCESS, {
-        user,
-      }),
-    );
+    if (!user.name) {
+      return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CREATED_USER, { accesstoken }));
+    }
+    res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.READ_USER_SUCCESS, { accesstoken }));
   } catch (error) {
     functions.logger.error(`[ERROR] [${req.method.toUpperCase()}] ${req.originalUrl}`, `[CONTENT] ${error}`);
     console.log(error);

@@ -29,7 +29,9 @@ const checkUser = async (req, res, next) => {
 
       user = await userDB.getUserById(client, id);
     } else {
-      const idFirebase = token;
+      const decodedToken = jwtHandlers.verify(token);
+      const idFirebase = decodedToken.idFirebase;
+
       user = await userDB.getUserByIdFirebase(client, idFirebase);
     }
 
