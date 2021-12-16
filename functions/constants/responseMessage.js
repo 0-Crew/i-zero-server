@@ -22,6 +22,7 @@ module.exports = {
 
   // Setting
   READ_USER_PRIVATE: '유저 둘러보기 공개 여부 조회 성공',
+  TOGGLE_USER_PRIVATE: '유저 둘러보기 공개 여부 수정 성공',
 
   // poisting
   READ_ALL_POSTS: '모든 게시글 조회 성공',
