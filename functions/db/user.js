@@ -48,6 +48,19 @@ const checkUserName = async (client, name) => {
   return convertSnakeToCamel.keysToCamel(rows[0]);
 };
 
+const checkUserPrivate = async (client, idFirebase) => {
+  const { rows } = await client.query(
+    `
+    SELECT u.is_private
+    FROM "user" u
+    WHERE u.id_firebase = $1
+    AND is_deleted = false
+    `,
+    [idFirebase],
+  );
+  return convertSnakeToCamel.keysToCamel(rows[0]);
+};
+
 const setUserName = async (client, name, idFirebase) => {
   const { rows } = await client.query(
     /*sql*/ `
@@ -84,4 +97,4 @@ const getUserByIdFirebase = async (client, idFirebase) => {
   return convertSnakeToCamel.keysToCamel(rows[0]);
 };
 
-module.exports = { getTest, getUserBySnsIdAndProvider, getUserByIdFirebase, getUserById, addUser, checkUserName, setUserName };
+module.exports = { getTest, getUserBySnsIdAndProvider, getUserByIdFirebase, getUserById, addUser, checkUserName, setUserName, checkUserPrivate };
