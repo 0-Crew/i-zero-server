@@ -7,5 +7,5 @@ module.exports = {
   myInconvenienceDB: require('./myInconvenienceDB'),
   myFollowingDB: require('./myFollowingDB'),
   notificationDB: require('./notificationDB'),
-  myNotification: require('./myNotification'),
+  // myNotification: require('./myNotification'),
 };

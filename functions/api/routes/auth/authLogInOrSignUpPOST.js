@@ -66,7 +66,7 @@ module.exports = async (req, res) => {
     if (!user.name) {
       return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CREATED_USER, { accesstoken }));
     }
-    res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.READ_USER_SUCCESS, { accesstoken }));
+    res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.LOGIN_SUCCESS, { accesstoken }));
   } catch (error) {
     functions.logger.error(`[ERROR] [${req.method.toUpperCase()}] ${req.originalUrl}`, `[CONTENT] ${error}`);
     console.log(error);
