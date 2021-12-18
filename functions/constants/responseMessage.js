@@ -20,6 +20,10 @@ module.exports = {
   READ_USER_SUCCESS: '유저 조회 성공',
   SET_USER_NAME_SUCCESS: '유저 이름 세팅 성공',
 
+  // 보틀월드
+  FOLLOW_SUCCESS: '팔로우 성공',
+  UNFOLLOW_SUCCESS: '언팔로우 성공',
+
   // Setting
   READ_USER_PRIVATE: '유저 둘러보기 공개 여부 조회 성공',
   TOGGLE_USER_PRIVATE: '유저 둘러보기 공개 여부 수정 성공',
