@@ -16,4 +16,29 @@ const addMyInonveniences = async (client, inconvenienceString) => {
   return convertSnakeToCamel.keysToCamel(rows);
 };
 
-module.exports = { addMyInonveniences };
+const updateMyInonvenienceById = async (client, myInconvenienceId, inconvenienceString) => {
+  const { rows } = await client.query(
+    /*sql*/ `
+        UPDATE my_inconvenience SET ("name",updated_at)=($1,now())
+        WHERE my_inconvenience.id = ${myInconvenienceId}
+        RETURNING *
+        `,
+    [inconvenienceString],
+  );
+
+  return convertSnakeToCamel.keysToCamel(rows);
+};
+
+module.exports = { addMyInonveniences, updateMyInonvenienceById };
+
+const finishToggleMyInonvenienceById = async (client, myInconvenienceId) => {
+  const { rows } = await client.query(/*sql*/ `
+          UPDATE my_inconvenience SET (is_finished,updated_at)=(NOT is_finished,now())
+          WHERE my_inconvenience.id = ${myInconvenienceId}
+          RETURNING *
+          `);
+
+  return convertSnakeToCamel.keysToCamel(rows);
+};
+
+module.exports = { addMyInonveniences, updateMyInonvenienceById, finishToggleMyInonvenienceById };

@@ -5,6 +5,9 @@ const numeral = require('numeral');
 
 const db = require('../../../db/db');
 const { convenienceDB, inconvenienceDB } = require('../../../db');
+const statusCode = require('../../../constants/statusCode');
+const util = require('../../../lib/util');
+const responseMessage = require('../../../constants/responseMessage');
 
 module.exports = async (req, res) => {
   const {} = req.body;
@@ -24,7 +27,7 @@ module.exports = async (req, res) => {
   } catch (error) {
     functions.logger.error(`[ERROR] [${req.method.toUpperCase()}] ${req.originalUrl}`, `[CONTENT] ${error}`);
     console.log(error);
-    res.status(500).json({ err: error, userMessage: error.message });
+    res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
   } finally {
     client.release();
   }
