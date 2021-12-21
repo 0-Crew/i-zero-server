@@ -94,6 +94,7 @@ const getUserById = async (client, userId) => {
     `
     SELECT * FROM "user"
     WHERE id = ${userId}
+    AND is_deleted = false
     `,
   );
   return convertSnakeToCamel.keysToCamel(rows[0]);
@@ -104,6 +105,8 @@ const getUserByIdFirebase = async (client, idFirebase) => {
     `
     SELECT * FROM "user"
     WHERE id_firebase = $1
+    AND is_deleted = false
+
     `,
     [idFirebase],
   );
