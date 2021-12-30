@@ -15,7 +15,7 @@ module.exports = async (req, res) => {
   try {
     client = await db.connect(req);
 
-    const myInconvenience = myInconvenienceDB.finishToggleMyInonvenienceById(client, myInconvenienceId);
+    const myInconvenience = await myInconvenienceDB.finishToggleMyInonvenienceById(client, myInconvenienceId);
     res.status(200).json({
       err: false,
       data: {

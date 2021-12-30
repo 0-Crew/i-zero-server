@@ -5,6 +5,8 @@ const router = express.Router();
 router.use('/auth', require('./auth'));
 router.use('/user', require('./user'));
 router.use('/my-challenge', require('./myChallenge'));
+router.use('/my-inconvenience', require('./myInconvenience'));
+
 router.use('/bottleworld', require('./bottleworld'));
 
 module.exports = router;
