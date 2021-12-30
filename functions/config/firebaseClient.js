@@ -1,4 +1,4 @@
-const { initializeApp } = require('firebas/app');
+const { initializeApp } = require('firebase/app');
 const { getAuth } = require('firebase/auth');
 
 const firebaseConfig = {
