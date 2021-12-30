@@ -7,22 +7,19 @@ const db = require('../../../db/db');
 const { myChallengeDB, myInconvenienceDB, inconvenienceDB } = require('../../../db');
 
 module.exports = async (req, res) => {
-  const { convenienceString, inconvenienceString, fromToday } = req.body;
-  if (!convenienceString || !inconvenienceString) return res.status(404).json({ err: true, userMessage: 'Not enough parameters.' });
+  const { myInconvenienceId } = req.body;
+  if (!myInconvenienceId) return res.status(404).json({ err: true, userMessage: 'Not enough parameters.' });
 
   let client;
 
   try {
     client = await db.connect(req);
 
-    const myChallenge = myChallengeDB.addMyChallenge(client, convenienceString, fromToday);
-    const myInconveniences = myInconvenienceDB.addMyInonveniences(client, inconvenienceString);
+    const myInconvenience = await myInconvenienceDB.finishToggleMyInonvenienceById(client, myInconvenienceId);
     res.status(200).json({
       err: false,
-
       data: {
-        myChallenge,
-        myInconveniences,
+        myInconvenience,
       },
     });
   } catch (error) {
