@@ -5,6 +5,9 @@ const numeral = require('numeral');
 
 const db = require('../../../db/db');
 const { myChallengeDB, myInconvenienceDB, inconvenienceDB } = require('../../../db');
+const statusCode = require('../../../constants/statusCode');
+const util = require('../../../lib/util');
+const responseMessage = require('../../../constants/responseMessage');
 
 module.exports = async (req, res) => {
   const { convenienceString, inconvenienceString, isfromToday } = req.body;
@@ -20,20 +23,15 @@ module.exports = async (req, res) => {
     const myInconveniences = await myInconvenienceDB.addMyInonveniences(client, inconvenienceString, req.user.id, myChallenge.id);
     await client.query('COMMIT');
 
-    res.status(200).json({
-      err: false,
+    let data = {
+      myChallenge,
+      myInconveniences,
+    };
 
-      data: {
-        myChallenge,
-        myInconveniences,
-      },
-    });
+    return res.status(statusCode.OK).send(util.success(statusCode.OK, '성공', data));
   } catch (error) {
-    await client.query('ROLLBACK');
-
-    functions.logger.error(`[ERROR] [${req.method.toUpperCase()}] ${req.originalUrl}`, `[CONTENT] ${error}`);
-    console.log(error);
-    res.status(500).json({ err: error, userMessage: error.message });
+    // 서버 에러시 500 return
+    res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
   } finally {
     client.release();
   }

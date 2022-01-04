@@ -25,14 +25,14 @@ module.exports = async (req, res) => {
     }
     const myInconveniences = await myInconvenienceDB.getMyInconvenicencesByMyChallengeId(client, myChallenge.id);
 
-    res.status(200).json({
-      err: false,
+    let data = {
       myChallenges,
       selectedChallenge: { myChallenge, myInconveniences },
-    });
+    };
+
+    return res.status(statusCode.OK).send(util.success(statusCode.OK, '성공', data));
   } catch (error) {
-    functions.logger.error(`[ERROR] [${req.method.toUpperCase()}] ${req.originalUrl}`, `[CONTENT] ${error}`);
-    console.log(error);
+    // 서버 에러시 500 return
     res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
   } finally {
     client.release();
