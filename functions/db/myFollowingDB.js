@@ -40,4 +40,30 @@ const toggleFollowingUser = async (client, relation, userId, followingUserId) =>
   return convertSnakeToCamel.keysToCamel(rows[0]);
 };
 
-module.exports = { checkFollowing, addFollowingUser, toggleFollowingUser };
+const countFollowing = async (client, userId) => {
+  const { rows } = await client.query(
+    `
+      SELECT count(*) 
+      FROM my_following
+      WHERE user_id = $1
+      AND is_deleted = false
+      `,
+    [userId],
+  );
+  return convertSnakeToCamel.keysToCamel(rows[0]);
+};
+
+const countFollower = async (client, userId) => {
+  const { rows } = await client.query(
+    `
+      SELECT count(*) 
+      FROM my_following
+      WHERE following_user_id = $1
+      AND is_deleted = false
+      `,
+    [userId],
+  );
+  return convertSnakeToCamel.keysToCamel(rows[0]);
+};
+
+module.exports = { checkFollowing, addFollowingUser, toggleFollowingUser, countFollowing, countFollower };
