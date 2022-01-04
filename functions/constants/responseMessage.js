@@ -13,7 +13,7 @@ module.exports = {
   LOGIN_SUCCESS: '로그인 성공',
   LOGIN_FAIL: '로그인 실패',
   NO_USER: '존재하지 않는 회원입니다.',
-  MISS_MATCH_PW: '비밀번호가 맞지 않습니다.',
+  MISS_MATCH_SNS_ID: 'snsID가 맞지 않습니다.',
   INVALID_EMAIL: '이메일이 맞지 않습니다.',
 
   // 프로필 조회
