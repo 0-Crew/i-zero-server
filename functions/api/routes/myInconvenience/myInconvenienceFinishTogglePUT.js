@@ -5,6 +5,9 @@ const numeral = require('numeral');
 
 const db = require('../../../db/db');
 const { myChallengeDB, myInconvenienceDB, inconvenienceDB } = require('../../../db');
+const statusCode = require('../../../constants/statusCode');
+const util = require('../../../lib/util');
+const responseMessage = require('../../../constants/responseMessage');
 
 module.exports = async (req, res) => {
   const { myInconvenienceId } = req.body;
@@ -16,16 +19,15 @@ module.exports = async (req, res) => {
     client = await db.connect(req);
 
     const myInconvenience = await myInconvenienceDB.finishToggleMyInonvenienceById(client, myInconvenienceId);
-    res.status(200).json({
-      err: false,
-      data: {
-        myInconvenience,
-      },
-    });
+
+    let data = {
+      myInconvenience,
+    };
+
+    return res.status(statusCode.OK).send(util.success(statusCode.OK, '성공', data));
   } catch (error) {
-    functions.logger.error(`[ERROR] [${req.method.toUpperCase()}] ${req.originalUrl}`, `[CONTENT] ${error}`);
-    console.log(error);
-    res.status(500).json({ err: error, userMessage: error.message });
+    // 서버 에러시 500 return
+    res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
   } finally {
     client.release();
   }
