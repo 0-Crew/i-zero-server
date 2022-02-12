@@ -25,6 +25,8 @@ module.exports = {
   FOLLOW_SUCCESS: '팔로우 성공',
   UNFOLLOW_SUCCESS: '언팔로우 성공',
   GET_FILTER_SUCCESS: '필터 정보 조회 성공',
+  GET_FOLLOWERS_SUCCESS: '보틀월드 팔로워 조회 성공',
+  GET_FOLLOWINGS_SUCCESS: '보틀월드 팔로잉 조회 성공',
 
   // Setting
   READ_USER_PRIVATE: '유저 둘러보기 공개 여부 조회 성공',
