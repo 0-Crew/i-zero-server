@@ -79,7 +79,7 @@ const getFollowers = async (client, userId) => {
   return convertSnakeToCamel.keysToCamel(rows);
 };
 
-const getFollowings = async (client, userId) => {
+const getFollowingUsers = async (client, userId, keyword) => {
   const { rows } = await client.query(
     /*sql*/ `
     SELECT "user".id, "user".name
@@ -87,6 +87,7 @@ const getFollowings = async (client, userId) => {
       LEFT JOIN "user" ON "user".id = my_following.following_user_id AND "user".is_private = false
     WHERE my_following.user_id = $1
     AND my_following.is_deleted = false
+    ${keyword ? `AND ("user".name ILIKE '%${keyword}%' OR "user".email ILIKE '%${keyword}%')` : ``}
       `,
     [userId],
   );
@@ -94,4 +95,15 @@ const getFollowings = async (client, userId) => {
   return convertSnakeToCamel.keysToCamel(rows);
 };
 
-module.exports = { checkFollowing, addFollowingUser, toggleFollowingUser, countFollowing, countFollower, getFollowers, getFollowings };
+const getUsersChallenge = async (client, userIds) => {
+  const { rows } = await client.query(/*sql*/ `
+    SELECT "user_id" AS id, "name", started_at
+    FROM my_challenge
+    WHERE my_challenge.user_id in (${userIds.join()})
+    AND my_challenge.is_deleted = false
+      `);
+
+  return convertSnakeToCamel.keysToCamel(rows);
+};
+
+module.exports = { checkFollowing, addFollowingUser, toggleFollowingUser, countFollowing, countFollower, getFollowers, getFollowingUsers, getUsersChallenge };
