@@ -2,11 +2,9 @@ const _ = require('lodash');
 const convertSnakeToCamel = require('../lib/convertSnakeToCamel');
 
 const getTest = async (client) => {
-  const { rows } = await client.query(
-    `
+  const { rows } = await client.query(/*sql*/ `
     SELECT * FROM test
-    `,
-  );
+    `);
 
   return convertSnakeToCamel.keysToCamel(rows);
 };
@@ -25,7 +23,7 @@ const addUser = async (client, email, snsId, provider, idFirebase) => {
 
 const getUserBySnsIdAndProvider = async (client, snsId, provider) => {
   const { rows } = await client.query(
-    `
+    /*sql*/ `
     SELECT * FROM "user"
     WHERE sns_id = $1
     AND provider = $2
@@ -38,7 +36,7 @@ const getUserBySnsIdAndProvider = async (client, snsId, provider) => {
 
 const checkUserName = async (client, name) => {
   const { rows } = await client.query(
-    `
+    /*sql*/ `
     SELECT u.name FROM "user" u
     WHERE name = $1
     AND is_deleted = false
@@ -50,7 +48,7 @@ const checkUserName = async (client, name) => {
 
 const checkUserPrivate = async (client, idFirebase) => {
   const { rows } = await client.query(
-    `
+    /*sql*/ `
     SELECT u.is_private
     FROM "user" u
     WHERE u.id_firebase = $1
@@ -63,7 +61,7 @@ const checkUserPrivate = async (client, idFirebase) => {
 
 const toggleUserPrivate = async (client, toggledPrivate, idFirebase) => {
   const { rows } = await client.query(
-    `
+    /*sql*/ `
     UPDATE "user" u
     SET is_private = $1
     WHERE u.id_firebase = $2
@@ -90,19 +88,17 @@ const setUserName = async (client, name, idFirebase) => {
 };
 
 const getUserById = async (client, userId) => {
-  const { rows } = await client.query(
-    `
+  const { rows } = await client.query(/*sql*/ `
     SELECT * FROM "user"
     WHERE id = ${userId}
     AND is_deleted = false
-    `,
-  );
+    `);
   return convertSnakeToCamel.keysToCamel(rows[0]);
 };
 
 const getUserByIdFirebase = async (client, idFirebase) => {
   const { rows } = await client.query(
-    `
+    /*sql*/ `
     SELECT * FROM "user"
     WHERE id_firebase = $1
     AND is_deleted = false
