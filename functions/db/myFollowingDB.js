@@ -71,9 +71,7 @@ const getFollowers = async (client, userId) => {
     /*sql*/ `
     SELECT * 
     FROM my_following
-      LEFT JOIN "user" on "user".
     WHERE my_following.following_user_id = $1
-    AND my_following.isDeleted = false
       `,
     [userId],
   );
@@ -84,9 +82,11 @@ const getFollowers = async (client, userId) => {
 const getFollowings = async (client, userId) => {
   const { rows } = await client.query(
     /*sql*/ `
-    SELECT * 
+    SELECT "user".id, "user".name
     FROM my_following
-    WHERE user_id = $1
+      LEFT JOIN "user" ON "user".id = my_following.following_user_id AND "user".is_private = false
+    WHERE my_following.user_id = $1
+    AND my_following.is_deleted = false
       `,
     [userId],
   );
