@@ -4,7 +4,6 @@ const responseMessage = require('../../../constants/responseMessage');
 const db = require('../../../db/db');
 const arrayHandlers = require('../../../lib/arrayHandlers');
 const { myFollowingDB } = require('../../../db');
-const { add } = require('lodash');
 
 module.exports = async (req, res) => {
   const user = req.user;
@@ -35,6 +34,9 @@ module.exports = async (req, res) => {
       return o;
     });
     console.log('challengesForUsers22 : ', challengesForUsers);
+
+    const result = Object.entries(challengesForUsers).map(([id, data]) => ({ ...data }));
+    console.log('result : ', result);
 
     return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.GET_FOLLOWINGS_SUCCESS));
   } catch (error) {

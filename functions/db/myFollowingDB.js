@@ -101,6 +101,8 @@ const getUsersChallenge = async (client, userIds) => {
     FROM my_challenge
     WHERE my_challenge.user_id in (${userIds.join()})
     AND my_challenge.is_deleted = false
+    ORDER BY my_challenge.started_at DESC
+    LIMIT 1 OFFSET 0 
       `);
 
   return convertSnakeToCamel.keysToCamel(rows);
