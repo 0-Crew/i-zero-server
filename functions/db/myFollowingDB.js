@@ -66,12 +66,15 @@ const countFollower = async (client, userId) => {
   return convertSnakeToCamel.keysToCamel(rows[0]);
 };
 
-const getFollowers = async (client, userId) => {
+const getFollowerUsers = async (client, userId, keyword) => {
   const { rows } = await client.query(
     /*sql*/ `
-    SELECT * 
+    SELECT "user".id, "user".name
     FROM my_following
+      LEFT JOIN "user" ON "user".id = my_following.user_id AND "user".is_private = false
     WHERE my_following.following_user_id = $1
+    AND my_following.is_deleted = false
+    ${keyword ? `AND ("user".name ILIKE '%${keyword}%' OR "user".email ILIKE '%${keyword}%')` : ``}
       `,
     [userId],
   );
@@ -108,4 +111,4 @@ const getUsersChallenge = async (client, userIds) => {
   return convertSnakeToCamel.keysToCamel(rows);
 };
 
-module.exports = { checkFollowing, addFollowingUser, toggleFollowingUser, countFollowing, countFollower, getFollowers, getFollowingUsers, getUsersChallenge };
+module.exports = { checkFollowing, addFollowingUser, toggleFollowingUser, countFollowing, countFollower, getFollowerUsers, getFollowingUsers, getUsersChallenge };
