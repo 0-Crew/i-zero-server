@@ -28,15 +28,15 @@ module.exports = async (req, res) => {
     }, {});
     // console.log('challengesForUsers :', challengesForUsers);
 
-    // ^_^// answerId로 그룹화 해준 answers들에 keywords를 넣어준다..
+    //  answerId로 그룹화 해준 유저 정보들에 challenge를 넣어준다.
     userChallenges.map((o) => {
       challengesForUsers[o.id].challenge = o;
       return o;
     });
     // console.log('challengesForUsers22 : ', challengesForUsers);
 
-    const result = Object.entries(challengesForUsers).map(([id, data]) => ({ ...data }));
-    console.log('result : ', result);
+    const result = Object.entries(challengesForUsers).map(([key, value]) => ({ ...value }));
+    // console.log('result : ', result);
 
     return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.GET_FOLLOWINGS_SUCCESS, result));
   } catch (error) {
