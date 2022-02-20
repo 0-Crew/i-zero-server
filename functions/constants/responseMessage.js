@@ -13,7 +13,7 @@ module.exports = {
   LOGIN_SUCCESS: '로그인 성공',
   LOGIN_FAIL: '로그인 실패',
   NO_USER: '존재하지 않는 회원입니다.',
-  MISS_MATCH_PW: '비밀번호가 맞지 않습니다.',
+  MISS_MATCH_SNS_ID: 'snsID가 맞지 않습니다.',
   INVALID_EMAIL: '이메일이 맞지 않습니다.',
 
   // 프로필 조회
@@ -25,6 +25,10 @@ module.exports = {
   FOLLOW_SUCCESS: '팔로우 성공',
   UNFOLLOW_SUCCESS: '언팔로우 성공',
   GET_FILTER_SUCCESS: '필터 정보 조회 성공',
+  GET_FOLLOWERS_SUCCESS: '보틀월드 팔로워 조회 성공',
+  NO_FOLLOWERS: '보틀월드 팔로워 없음',
+  GET_FOLLOWINGS_SUCCESS: '보틀월드 팔로잉 조회 성공',
+  NO_FOLLOWINGS: '보틀월드 팔로잉 없음',
 
   // Setting
   READ_USER_PRIVATE: '유저 둘러보기 공개 여부 조회 성공',

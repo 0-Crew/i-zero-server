@@ -40,8 +40,8 @@ const checkUser = async (req, res, next) => {
     req.user = user;
 
     const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-    console.log(`email: ${user.email} uid: ${user.id}`, ip, user.firstName, user.lastName, `[${req.method.toUpperCase()}]`, req.originalUrl);
-    functions.logger.log(`email: ${user.email} uid: ${user.id}`, ip, user.firstName, user.lastName, `[${req.method.toUpperCase()}]`, req.originalUrl);
+    console.log(`email: ${user.email} uid: ${user.id}`, ip, user.name, `[${req.method.toUpperCase()}]`, req.originalUrl);
+    functions.logger.log(`email: ${user.email} uid: ${user.id}`, ip, user.name, `[${req.method.toUpperCase()}]`, req.originalUrl);
   } catch (error) {
     console.log(error);
     functions.logger.error(`[ERROR] [${req.method.toUpperCase()}] ${req.originalUrl}`, `[CONTENT] ${error}`);
