@@ -100,13 +100,20 @@ const getFollowingUsers = async (client, userId, keyword) => {
 
 const getUsersChallenge = async (client, userIds) => {
   const { rows } = await client.query(/*sql*/ `
-    SELECT "user_id" AS id, "name", started_at
-    FROM my_challenge
+    SELECT id, "user_id" , "name", started_at, (SELECT count(*) FROM my_inconvenience WHERE my_inconvenience.my_challenge_id = my_challenge.id AND my_inconvenience.is_finished = true) AS inconvenience_Count
+    FROM my_challenge 
     WHERE my_challenge.user_id in (${userIds.join()})
     AND my_challenge.is_deleted = false
     ORDER BY my_challenge.started_at DESC
     LIMIT 1 OFFSET 0 
       `);
+
+  // SELECT id,"user_id" , "name", started_at
+  // FROM my_challenge
+  // WHERE my_challenge.user_id in (${userIds.join()})
+  // AND my_challenge.is_deleted = false
+  // ORDER BY my_challenge.started_at DESC
+  // LIMIT 1 OFFSET 0
 
   return convertSnakeToCamel.keysToCamel(rows);
 };
