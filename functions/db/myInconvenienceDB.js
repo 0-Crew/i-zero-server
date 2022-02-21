@@ -46,4 +46,15 @@ const getMyInconvenicencesByMyChallengeId = async (client, myChallengeId) => {
 
   return convertSnakeToCamel.keysToCamel(rows);
 };
-module.exports = { addMyInonveniences, updateMyInonvenienceById, finishToggleMyInonvenienceById, getMyInconvenicencesByMyChallengeId };
+
+const getMyInconveniencesForBrowse = async (client) => {
+  const { rows } = await client.query(/*sql*/ `
+    SELECT my_inconvenience.updated_at, my_inconvenience.name, my_inconvenience.user_id FROM my_inconvenience
+    WHERE is_deleted = false
+    AND my_inconvenience.user_id IN (SELECT u.id FROM "user" u WHERE u.is_private = false )
+    ORDER BY "updated_at"  DESC
+    `);
+
+  return convertSnakeToCamel.keysToCamel(rows);
+};
+module.exports = { addMyInonveniences, updateMyInonvenienceById, finishToggleMyInonvenienceById, getMyInconvenicencesByMyChallengeId, getMyInconveniencesForBrowse };

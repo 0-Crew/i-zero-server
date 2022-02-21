@@ -18,23 +18,23 @@ module.exports = async (req, res) => {
 
     if (followingUsers.length != 0) {
       const userIds = arrayHandlers.extractValues(followingUsers, 'id');
-      // console.log('userIds : ', userIds);
+      console.log('userIds : ', userIds);
 
       const userChallenges = await myFollowingDB.getUsersChallenge(client, userIds);
-      // console.log('userChallenges : ', userChallenges);
+      console.log('userChallenges : ', userChallenges);
 
       const challengesForUsers = followingUsers.reduce((acc, x) => {
         acc[x.id] = { user: { ...x }, challenge: {} };
         return acc;
       }, {});
-      // console.log('challengesForUsers :', challengesForUsers);
+      console.log('challengesForUsers :', challengesForUsers);
 
       //  userId로 그룹화 해준 유저 정보들에 challenge를 넣어준다.
       userChallenges.map((o) => {
         challengesForUsers[o.userId].challenge = o;
         return o;
       });
-      // console.log('challengesForUsers22 : ', challengesForUsers);
+      console.log('challengesForUsers22 : ', challengesForUsers);
 
       result = Object.entries(challengesForUsers).map(([key, value]) => ({ ...value }));
       // console.log('result : ', result);
