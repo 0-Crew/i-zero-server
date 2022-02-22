@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const convertSnakeToCamel = require('../lib/convertSnakeToCamel');
+const arrayHandlers = require('../lib/arrayHandlers');
 
 const checkFollowing = async (client, userId, followingUserId) => {
   const { rows } = await client.query(
@@ -87,7 +88,7 @@ const getFollowingUsers = async (client, userId, keyword) => {
     /*sql*/ `
     SELECT "user".id, "user".name
     FROM my_following
-      LEFT JOIN "user" ON "user".id = my_following.following_user_id AND "user".is_private = false
+      JOIN "user" ON "user".id = my_following.following_user_id AND "user".is_private = false
     WHERE my_following.user_id = $1
     AND my_following.is_deleted = false
     ${keyword ? `AND ("user".name ILIKE '%${keyword}%' OR "user".email ILIKE '%${keyword}%')` : ``}
@@ -98,4 +99,43 @@ const getFollowingUsers = async (client, userId, keyword) => {
   return convertSnakeToCamel.keysToCamel(rows);
 };
 
-module.exports = { checkFollowing, addFollowingUser, toggleFollowingUser, countFollowing, countFollower, getFollowerUsers, getFollowingUsers };
+const getFollowBackUsersForFollowing = async (client, userId, userIds) => {
+  let { rows } = await client.query(
+    /*sql*/ `
+    SELECT my_following.user_id
+    FROM my_following
+    WHERE my_following.user_id in (${userIds.join()})
+    AND my_following.is_deleted = false
+    AND my_following.following_user_id = $1
+      `,
+    [userId],
+  );
+  rows = arrayHandlers.extractValues(rows, 'user_id');
+  return convertSnakeToCamel.keysToCamel(rows);
+};
+
+const getFollowBackUsersForFollower = async (client, userId, userIds) => {
+  let { rows } = await client.query(
+    /*sql*/ `
+    SELECT my_following.user_id
+    FROM my_following
+    WHERE my_following.following_user_id in (${userIds.join()})
+    AND my_following.is_deleted = false
+    AND my_following.user_id = $1
+      `,
+    [userId],
+  );
+  rows = arrayHandlers.extractValues(rows, 'user_id');
+  return convertSnakeToCamel.keysToCamel(rows);
+};
+module.exports = {
+  checkFollowing,
+  addFollowingUser,
+  toggleFollowingUser,
+  countFollowing,
+  countFollower,
+  getFollowerUsers,
+  getFollowingUsers,
+  getFollowBackUsersForFollowing,
+  getFollowBackUsersForFollower,
+};
