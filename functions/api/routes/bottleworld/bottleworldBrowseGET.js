@@ -19,7 +19,7 @@ module.exports = async (req, res) => {
     // const followingUsers = await myFollowingDB.getFollowingUsers(client, user.id, keyword);
     // // console.log('followings : ', followingUsers);
 
-    const userIds = arrayHandlers.extractValues(myInconveniencesForBrowse, 'userId');
+    const userIds = arrayHandlers.extractValues(myInconveniencesForBrowse, 'id');
     console.log('userIds : ', userIds);
 
     const userChallenges = await myFollowingDB.getUsersChallenge(client, userIds);

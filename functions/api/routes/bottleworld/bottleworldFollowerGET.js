@@ -3,7 +3,7 @@ const statusCode = require('../../../constants/statusCode');
 const responseMessage = require('../../../constants/responseMessage');
 const db = require('../../../db/db');
 const arrayHandlers = require('../../../lib/arrayHandlers');
-const { myFollowingDB } = require('../../../db');
+const { myFollowingDB, myChallengeDB } = require('../../../db');
 
 module.exports = async (req, res) => {
   const user = req.user;
@@ -20,7 +20,7 @@ module.exports = async (req, res) => {
     console.log('userIds : ', userIds);
 
     if (followerUsers.length != 0) {
-      const userChallenges = await myFollowingDB.getUsersChallenge(client, userIds);
+      const userChallenges = await myChallengeDB.getUsersChallenge(client, userIds);
       console.log('userChallenges : ', userChallenges);
 
       // 여기서 가져온 challenge id 들로 해당 챌린지의 inconvenience 얼마나 해결했는지 찾아야함

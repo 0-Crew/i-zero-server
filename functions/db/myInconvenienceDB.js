@@ -48,11 +48,19 @@ const getMyInconvenicencesByMyChallengeId = async (client, myChallengeId) => {
 };
 
 const getMyInconveniencesForBrowse = async (client) => {
+  // const { rows } = await client.query(/*sql*/ `
+  //   SELECT my_inconvenience.updated_at, my_inconvenience.name, my_inconvenience.user_id FROM my_inconvenience
+  //   WHERE is_deleted = false
+  //   AND my_inconvenience.user_id IN (SELECT u.id FROM "user" u WHERE u.is_private = false )
+  //   ORDER BY "updated_at"  DESC
+  //   `);
+
   const { rows } = await client.query(/*sql*/ `
-    SELECT my_inconvenience.updated_at, my_inconvenience.name, my_inconvenience.user_id FROM my_inconvenience
-    WHERE is_deleted = false
-    AND my_inconvenience.user_id IN (SELECT u.id FROM "user" u WHERE u.is_private = false )
-    ORDER BY "updated_at"  DESC
+    SELECT u.id, u.name
+    FROM "user" u
+    JOIN (SELECT * FROM my_inconvenience  WHERE my_inconvenience.is_deleted = false ) i ON u.id = i.user_id
+    WHERE u.is_deleted = false and u.is_private = false
+    ORDER BY i."updated_at"  DESC
     `);
 
   return convertSnakeToCamel.keysToCamel(rows);
