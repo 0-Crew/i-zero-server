@@ -4,7 +4,6 @@ const responseMessage = require('../../../constants/responseMessage');
 const db = require('../../../db/db');
 const arrayHandlers = require('../../../lib/arrayHandlers');
 const { myInconvenienceDB, myChallengeDB, myFollowingDB } = require('../../../db');
-const jwt = require('jsonwebtoken');
 
 module.exports = async (req, res) => {
   const user = req.user;

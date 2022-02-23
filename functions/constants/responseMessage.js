@@ -15,6 +15,7 @@ module.exports = {
   NO_USER: '존재하지 않는 회원입니다.',
   MISS_MATCH_SNS_ID: 'snsID가 맞지 않습니다.',
   INVALID_EMAIL: '이메일이 맞지 않습니다.',
+  MISS_MATCH_PW: '비밀번호가 맞지 않습니다.',
 
   // AUTH
   EXPIRED_TOKEN: '만료된 토큰입니다',
