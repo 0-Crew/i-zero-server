@@ -23,12 +23,12 @@ module.exports = async (req, res) => {
       const userChallenges = await myChallengeDB.getUsersChallenge(client, userIds);
       // console.log('userChallenges : ', userChallenges);
 
-      const getFollowBackUsersForFollower = await myFollowingDB.getFollowBackUsersForFollower(client, user.id, userIds);
+      const getFollowBackUsersForFollower = await myFollowingDB.getFollowBackUsers(client, user.id, userIds);
       // console.log('getFollowBackUsersForFollower : ', getFollowBackUsersForFollower);
 
       // 여기서 가져온 challenge id 들로 해당 챌린지의 inconvenience 얼마나 해결했는지 찾아야함
       const challengesForUsers = followerUsers.reduce((acc, x) => {
-        acc[x.id] = { user: { ...x }, challenge: {}, followBack: false };
+        acc[x.id] = { user: { ...x }, challenge: {}, follow: false };
         return acc;
       }, {});
       // console.log('challengesForUsers : ', challengesForUsers);
@@ -43,7 +43,7 @@ module.exports = async (req, res) => {
       // followBack 여부에 따라 값을 처리해준다.
       getFollowBackUsersForFollower.map((o) => {
         if (challengesForUsers[o]) {
-          challengesForUsers[o].followBack = true;
+          challengesForUsers[o].follow = true;
           return o;
         }
       });

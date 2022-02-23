@@ -99,25 +99,10 @@ const getFollowingUsers = async (client, userId, keyword) => {
   return convertSnakeToCamel.keysToCamel(rows);
 };
 
-const getFollowBackUsersForFollowing = async (client, userId, userIds) => {
+const getFollowBackUsers = async (client, userId, userIds) => {
   let { rows } = await client.query(
     /*sql*/ `
-    SELECT my_following.user_id
-    FROM my_following
-    WHERE my_following.user_id in (${userIds.join()})
-    AND my_following.is_deleted = false
-    AND my_following.following_user_id = $1
-      `,
-    [userId],
-  );
-  rows = arrayHandlers.extractValues(rows, 'user_id');
-  return convertSnakeToCamel.keysToCamel(rows);
-};
-
-const getFollowBackUsersForFollower = async (client, userId, userIds) => {
-  let { rows } = await client.query(
-    /*sql*/ `
-    SELECT my_following.user_id
+    SELECT *
     FROM my_following
     WHERE my_following.following_user_id in (${userIds.join()})
     AND my_following.is_deleted = false
@@ -125,7 +110,7 @@ const getFollowBackUsersForFollower = async (client, userId, userIds) => {
       `,
     [userId],
   );
-  rows = arrayHandlers.extractValues(rows, 'user_id');
+  rows = arrayHandlers.extractValues(rows, 'following_user_id');
   return convertSnakeToCamel.keysToCamel(rows);
 };
 module.exports = {
@@ -136,6 +121,5 @@ module.exports = {
   countFollower,
   getFollowerUsers,
   getFollowingUsers,
-  getFollowBackUsersForFollowing,
-  getFollowBackUsersForFollower,
+  getFollowBackUsers,
 };

@@ -23,11 +23,8 @@ module.exports = async (req, res) => {
       const userChallenges = await myChallengeDB.getUsersChallenge(client, userIds);
       // console.log('userChallenges : ', userChallenges);
 
-      const getFollowBackUsersForFollowing = await myFollowingDB.getFollowBackUsersForFollowing(client, user.id, userIds);
-      // console.log('getFollowBackUsersForFollowing : ', getFollowBackUsersForFollowing);
-
       const challengesForUsers = followingUsers.reduce((acc, x) => {
-        acc[x.id] = { user: { ...x }, challenge: {}, followBack: false };
+        acc[x.id] = { user: { ...x }, challenge: {}, follow: true };
         return acc;
       }, {});
       // console.log('challengesForUsers :', challengesForUsers);
@@ -38,14 +35,6 @@ module.exports = async (req, res) => {
         return o;
       });
       // console.log('challengesForUsers22 : ', challengesForUsers);
-
-      // followBack 여부에 따라 값을 처리해준다.
-      getFollowBackUsersForFollowing.map((o) => {
-        if (challengesForUsers[o]) {
-          challengesForUsers[o].followBack = true;
-          return o;
-        }
-      });
 
       result = Object.entries(challengesForUsers).map(([key, value]) => ({ ...value }));
       // console.log('result : ', result);
