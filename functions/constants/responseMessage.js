@@ -36,6 +36,7 @@ module.exports = {
   GET_FOLLOWINGS_SUCCESS: '보틀월드 팔로잉 조회 성공',
   NO_FOLLOWINGS: '보틀월드 팔로잉 없음',
   GET_BROWSE_SUCCESS: '보틀월드 둘러보기 조회 성공',
+  NO_BROWSE_RESULT: '보틀월드 둘러보기 결과 없음',
 
   // Setting
   READ_USER_PRIVATE: '유저 둘러보기 공개 여부 조회 성공',

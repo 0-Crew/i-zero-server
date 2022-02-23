@@ -51,7 +51,7 @@ module.exports = async (req, res) => {
       result = Object.entries(challengesForUsers).map(([key, value]) => ({ ...value }));
     } else {
       console.log('follower 없음');
-      let result = [];
+      result = [];
     }
 
     return res.status(statusCode.OK).send(util.success(statusCode.OK, followerUsers.length != 0 ? responseMessage.GET_FOLLOWERS_SUCCESS : responseMessage.NO_FOLLOWERS, result));
