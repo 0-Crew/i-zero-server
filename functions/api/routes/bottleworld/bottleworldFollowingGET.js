@@ -3,7 +3,7 @@ const statusCode = require('../../../constants/statusCode');
 const responseMessage = require('../../../constants/responseMessage');
 const db = require('../../../db/db');
 const arrayHandlers = require('../../../lib/arrayHandlers');
-const { myFollowingDB } = require('../../../db');
+const { myFollowingDB, myChallengeDB } = require('../../../db');
 
 module.exports = async (req, res) => {
   const user = req.user;
@@ -20,11 +20,11 @@ module.exports = async (req, res) => {
       const userIds = arrayHandlers.extractValues(followingUsers, 'id');
       // console.log('userIds : ', userIds);
 
-      const userChallenges = await myFollowingDB.getUsersChallenge(client, userIds);
+      const userChallenges = await myChallengeDB.getUsersChallenge(client, userIds);
       // console.log('userChallenges : ', userChallenges);
 
       const challengesForUsers = followingUsers.reduce((acc, x) => {
-        acc[x.id] = { user: { ...x }, challenge: {} };
+        acc[x.id] = { user: { ...x }, challenge: {}, follow: true };
         return acc;
       }, {});
       // console.log('challengesForUsers :', challengesForUsers);

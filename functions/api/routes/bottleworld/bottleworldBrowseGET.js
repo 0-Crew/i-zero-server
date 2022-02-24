@@ -3,35 +3,40 @@ const statusCode = require('../../../constants/statusCode');
 const responseMessage = require('../../../constants/responseMessage');
 const db = require('../../../db/db');
 const arrayHandlers = require('../../../lib/arrayHandlers');
-const { myFollowingDB, myChallengeDB } = require('../../../db');
+const { myInconvenienceDB, myChallengeDB, myFollowingDB } = require('../../../db');
 
 module.exports = async (req, res) => {
   const user = req.user;
   const { keyword } = req.query;
+  console.log('user', user);
+
   let client;
   let result;
 
   try {
     client = await db.connect(req);
-    const followerUsers = await myFollowingDB.getFollowerUsers(client, user.id, keyword);
-    // console.log('followers : ', followerUsers);
 
-    const userIds = arrayHandlers.extractValues(followerUsers, 'id');
+    const myInconveniencesForBrowse = await myInconvenienceDB.getMyInconveniencesForBrowse(client, keyword);
+    // console.log('myInconveniencesForBrowse', myInconveniencesForBrowse);
+
+    // const followingUsers = await myFollowingDB.getFollowingUsers(client, user.id, keyword);
+    // console.log('followings : ', followingUsers);
+
+    const userIds = arrayHandlers.extractValues(myInconveniencesForBrowse, 'id');
     // console.log('userIds : ', userIds);
 
-    if (followerUsers.length != 0) {
+    if (myInconveniencesForBrowse.length != 0) {
       const userChallenges = await myChallengeDB.getUsersChallenge(client, userIds);
       // console.log('userChallenges : ', userChallenges);
 
-      const getFollowBackUsersForFollower = await myFollowingDB.getFollowBackUsers(client, user.id, userIds);
-      // console.log('getFollowBackUsersForFollower : ', getFollowBackUsersForFollower);
+      const getFollowBackUsers = await myFollowingDB.getFollowBackUsers(client, user.id, userIds);
+      // console.log('getFollowBackUsers : ', getFollowBackUsers);
 
-      // 여기서 가져온 challenge id 들로 해당 챌린지의 inconvenience 얼마나 해결했는지 찾아야함
-      const challengesForUsers = followerUsers.reduce((acc, x) => {
+      const challengesForUsers = myInconveniencesForBrowse.reduce((acc, x) => {
         acc[x.id] = { user: { ...x }, challenge: {}, follow: false };
         return acc;
       }, {});
-      // console.log('challengesForUsers : ', challengesForUsers);
+      // console.log('challengesForUsers :', challengesForUsers);
 
       //  userId로 그룹화 해준 유저 정보들에 challenge를 넣어준다.
       userChallenges.map((o) => {
@@ -41,7 +46,7 @@ module.exports = async (req, res) => {
       // console.log('challengesForUsers22 : ', challengesForUsers);
 
       // followBack 여부에 따라 값을 처리해준다.
-      getFollowBackUsersForFollower.map((o) => {
+      getFollowBackUsers.map((o) => {
         if (challengesForUsers[o]) {
           challengesForUsers[o].follow = true;
           return o;
@@ -49,12 +54,13 @@ module.exports = async (req, res) => {
       });
 
       result = Object.entries(challengesForUsers).map(([key, value]) => ({ ...value }));
+      // console.log('result : ', result);
     } else {
-      console.log('follower 없음');
+      console.log('둘러보기 해당 user 없음');
       result = [];
     }
 
-    return res.status(statusCode.OK).send(util.success(statusCode.OK, followerUsers.length != 0 ? responseMessage.GET_FOLLOWERS_SUCCESS : responseMessage.NO_FOLLOWERS, result));
+    return res.status(statusCode.OK).send(util.success(statusCode.OK, myInconveniencesForBrowse.length != 0 ? responseMessage.GET_BROWSE_SUCCESS : responseMessage.NO_BROWSE_RESULT, result));
   } catch (error) {
     // 서버 에러시 500 return
     res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
