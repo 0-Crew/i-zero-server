@@ -36,6 +36,7 @@ module.exports = async (req, res) => {
     let idFirebase;
     let user;
     let email;
+    let type;
 
     switch (provider.toLowerCase()) {
       case 'apple':
@@ -72,6 +73,7 @@ module.exports = async (req, res) => {
 
     // firebase 인증 후, 계정이 없다는 err를 만난 경우! -> 회원가입을 시켜야한다.
     if (loginSuccess === false) {
+      type = 'signUp';
       // 처음 로그인 시도를 하는 유저
       // Firebase Authentication을 통해 유저를 생성!!
       const newUserFirebase = await admin
@@ -94,6 +96,7 @@ module.exports = async (req, res) => {
       idFirebase = newUserFirebase.uid;
       user = await userDB.addUser(client, email, idKey, provider, idFirebase);
     } else {
+      type = 'login';
       // Firebase 인증이 된 경우라면 RDS의 userDB에서 유저 정보를 찾는다.
       idFirebase = userFirebase.user.uid;
       const isExist = await userDB.getUserByIdFirebase(client, idFirebase);
@@ -103,11 +106,7 @@ module.exports = async (req, res) => {
     // JWT access token 발급
     const { accesstoken } = jwtHandlers.sign(user);
 
-    // 계정을 만든 이후에는 무조건 이름 설정뷰로 이동하기 떄문에, 유저의 이름이 null이라면 지금 막 가입을 한 계정이다!
-    if (!user.name) {
-      return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.CREATED_USER, { accesstoken }));
-    }
-    res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.LOGIN_SUCCESS, { accesstoken }));
+    res.status(statusCode.OK).send(util.success(statusCode.OK, type == 'login' ? responseMessage.LOGIN_SUCCESS : responseMessage.CREATED_USER, { type, accesstoken }));
   } catch (error) {
     functions.logger.error(`[ERROR] [${req.method.toUpperCase()}] ${req.originalUrl}`, `[CONTENT] ${error}`);
     console.log(error);
