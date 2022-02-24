@@ -8,6 +8,7 @@ const { myInconvenienceDB, myChallengeDB, myFollowingDB } = require('../../../db
 module.exports = async (req, res) => {
   const user = req.user;
   const { keyword } = req.query;
+  console.log('user', user);
 
   let client;
   let result;
