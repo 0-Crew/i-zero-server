@@ -14,6 +14,19 @@ const checkFollowing = async (client, userId, followingUserId) => {
   );
   return convertSnakeToCamel.keysToCamel(rows[0]);
 };
+const checkIsFollowing = async (client, userId, followingUserId) => {
+  const { rows } = await client.query(
+    /*sql*/ `
+    SELECT * 
+    FROM my_following
+    WHERE user_id = $1
+    AND following_user_id = $2
+    AND is_deleted = false
+    `,
+    [userId, followingUserId],
+  );
+  return convertSnakeToCamel.keysToCamel(rows);
+};
 
 const addFollowingUser = async (client, userId, followingUserId) => {
   const { rows } = await client.query(
@@ -122,4 +135,5 @@ module.exports = {
   getFollowerUsers,
   getFollowingUsers,
   getFollowBackUsers,
+  checkIsFollowing,
 };
