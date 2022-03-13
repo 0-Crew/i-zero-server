@@ -49,4 +49,15 @@ const getMyChallenges = async (client, userId) => {
   return convertSnakeToCamel.keysToCamel(rows);
 };
 
-module.exports = { getNowMyChallenge, addMyChallenge, getMyChallenges, getMyChallengeById };
+const getUsersChallenge = async (client, userIds) => {
+  const { rows } = await client.query(/*sql*/ `
+    SELECT id, "user_id" , "name", started_at, (SELECT count(*) FROM my_inconvenience WHERE my_inconvenience.my_challenge_id = my_challenge.id AND my_inconvenience.is_finished = true) AS "count"
+    FROM my_challenge 
+    WHERE my_challenge.user_id in (${userIds.join()})
+    AND my_challenge.is_deleted = false
+    ORDER BY my_challenge.started_at 
+      `);
+  return convertSnakeToCamel.keysToCamel(rows);
+};
+
+module.exports = { getNowMyChallenge, addMyChallenge, getMyChallenges, getMyChallengeById, getUsersChallenge };
