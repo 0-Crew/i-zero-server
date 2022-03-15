@@ -1,4 +1,6 @@
 const jwt = require('jsonwebtoken');
+const axios = require('axios');
+const responseMessage = require('../constants/responseMessage');
 
 const appleAuth = async (appleAccessToken) => {
   console.log('🔑 Apple 유저 정보 확인 🔑');
@@ -13,4 +15,27 @@ const appleAuth = async (appleAccessToken) => {
   }
 };
 
-module.exports = { appleAuth };
+const kakaoAuth = async (kakaoAccessToken) => {
+  console.log('🔑 Kakao 유저 정보 확인 🔑');
+
+  try {
+    const user = await axios({
+      method: 'GET',
+      url: 'https://kapi.kakao.com/v2/user/me',
+      headers: {
+        Authorization: `Bearer ${kakaoAccessToken}`,
+      },
+    });
+
+    const kakaoUser = user.data.kakao_account;
+
+    if (!kakaoUser) return responseMessage.NOT_INCLUDE_EMAIL;
+    if (!kakaoUser.is_email_valid || !kakaoUser.is_email_verified) return responseMessage.INVALID_USER;
+
+    return kakaoUser;
+  } catch (err) {
+    return null;
+  }
+};
+
+module.exports = { appleAuth, kakaoAuth };
