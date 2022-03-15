@@ -4,10 +4,14 @@ const responseMessage = require('../../../constants/responseMessage');
 const db = require('../../../db/db');
 const arrayHandlers = require('../../../lib/arrayHandlers');
 const { myInconvenienceDB, myChallengeDB, myFollowingDB } = require('../../../db');
+const dayjs = require('dayjs');
+const { now } = require('lodash');
 
 module.exports = async (req, res) => {
   const user = req.user;
   const { keyword } = req.query;
+  let { offset } = req.query;
+
   console.log('user', user);
 
   let client;
@@ -16,7 +20,7 @@ module.exports = async (req, res) => {
   try {
     client = await db.connect(req);
 
-    const myInconveniencesForBrowse = await myInconvenienceDB.getMyInconveniencesForBrowse(client, keyword);
+    const myInconveniencesForBrowse = await myInconvenienceDB.getMyInconveniencesForBrowse(client, offset, keyword);
     // console.log('myInconveniencesForBrowse', myInconveniencesForBrowse);
 
     // const followingUsers = await myFollowingDB.getFollowingUsers(client, user.id, keyword);
