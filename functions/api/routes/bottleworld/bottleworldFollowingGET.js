@@ -8,13 +8,17 @@ const { myFollowingDB, myChallengeDB } = require('../../../db');
 module.exports = async (req, res) => {
   const user = req.user;
   const { keyword } = req.query;
+  let { offset } = req.query;
 
   let client;
   let result;
   try {
     client = await db.connect(req);
-    const followingUsers = await myFollowingDB.getFollowingUsers(client, user.id, keyword);
-    console.log('followings : ', followingUsers);
+    if (!offset) {
+      offset = 999999;
+    }
+    const followingUsers = await myFollowingDB.getFollowingUsers(client, user.id, offset, keyword);
+    // console.log('followings : ', followingUsers);
 
     if (followingUsers.length != 0) {
       const userIds = arrayHandlers.extractValues(followingUsers, 'id');
