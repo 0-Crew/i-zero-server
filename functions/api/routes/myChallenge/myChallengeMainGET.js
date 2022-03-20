@@ -18,7 +18,7 @@ module.exports = async (req, res) => {
   try {
     client = await db.connect(req);
 
-    const myFollowings = await myFollowingDB.getFollowingUsers(client, req.user.id, null);
+    const myFollowings = await myFollowingDB.getFollowingUsersForMain(client, req.user.id, null);
     const inconvenience = await inconvenienceDB.getInconveniences(client);
     let myChallenge = null;
     let myInconveniences = [];
