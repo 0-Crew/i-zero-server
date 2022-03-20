@@ -22,6 +22,10 @@ module.exports = {
   INVALID_TOKEN: '유효하지 않은 토큰입니다.',
   NO_AUTH_HEADER: '헤더가 없습니다.',
   EMPTY_TOKEN: '토큰 값이 없습니다.',
+  NOT_INCLUDE_EMAIL: '인증된 계정에 이메일 값이 없습니다.',
+  INVALID_USER: '유효하지 않은 유저입니다.',
+  NO_USER_SOCIAL: '존재하지 않는 소셜 유저입니다.',
+
   // 프로필 조회
   READ_PROFILE_SUCCESS: '프로필 조회 성공',
   READ_USER_SUCCESS: '유저 조회 성공',

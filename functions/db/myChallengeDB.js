@@ -55,6 +55,7 @@ const getUsersChallenge = async (client, userIds) => {
     FROM my_challenge 
     WHERE my_challenge.user_id in (${userIds.join()})
     AND my_challenge.is_deleted = false
+    AND now() BETWEEN started_at AND started_at + interval '7 day'
     ORDER BY my_challenge.started_at 
       `);
   return convertSnakeToCamel.keysToCamel(rows);

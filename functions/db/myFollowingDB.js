@@ -80,15 +80,18 @@ const countFollower = async (client, userId) => {
   return convertSnakeToCamel.keysToCamel(rows[0]);
 };
 
-const getFollowerUsers = async (client, userId, keyword) => {
+const getFollowerUsers = async (client, userId, offset, keyword) => {
   const { rows } = await client.query(
     /*sql*/ `
     SELECT "user".id, "user".name
     FROM my_following
       LEFT JOIN "user" ON "user".id = my_following.user_id AND "user".is_private = false
     WHERE my_following.following_user_id = $1
+    AND "user".id < ${offset}
     AND my_following.is_deleted = false
     ${keyword ? `AND ("user".name ILIKE '%${keyword}%' OR "user".email ILIKE '%${keyword}%')` : ``}
+    ORDER BY "user".id DESC 
+    LIMIT 10
       `,
     [userId],
   );
@@ -96,15 +99,18 @@ const getFollowerUsers = async (client, userId, keyword) => {
   return convertSnakeToCamel.keysToCamel(rows);
 };
 
-const getFollowingUsers = async (client, userId, keyword) => {
+const getFollowingUsers = async (client, userId, offset, keyword) => {
   const { rows } = await client.query(
     /*sql*/ `
     SELECT "user".id, "user".name
     FROM my_following
       JOIN "user" ON "user".id = my_following.following_user_id AND "user".is_private = false
     WHERE my_following.user_id = $1
+    AND "user".id < ${offset}
     AND my_following.is_deleted = false
     ${keyword ? `AND ("user".name ILIKE '%${keyword}%' OR "user".email ILIKE '%${keyword}%')` : ``}
+    ORDER BY "user".id DESC 
+    LIMIT 10
       `,
     [userId],
   );

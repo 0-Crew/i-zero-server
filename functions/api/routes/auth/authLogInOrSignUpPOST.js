@@ -6,7 +6,7 @@ const responseMessage = require('../../../constants/responseMessage');
 const db = require('../../../db/db');
 const { userDB } = require('../../../db');
 const jwtHandlers = require('../../../lib/jwtHandlers');
-const { appleAuth } = require('../../../lib/OAuth');
+const { appleAuth, kakaoAuth } = require('../../../lib/OAuth');
 const { firebaseAuth } = require('../../../config/firebaseClient');
 const { signInWithEmailAndPassword } = require('firebase/auth');
 const jwt = require('jsonwebtoken');
@@ -42,6 +42,20 @@ module.exports = async (req, res) => {
       case 'apple':
         const appleUser = await appleAuth(token);
         if (appleUser.email) email = appleUser.email;
+        break;
+
+      case 'kakao':
+        const kakaoUser = await kakaoAuth(token);
+        if (!kakaoUser) return res.status(statusCode.BAD_REQUEST).json(util.fail(statusCode.BAD_REQUEST, responseMessage.NO_USER_SOCIAL));
+
+        if (kakaoUser === responseMessage.NOT_INCLUDE_EMAIL) email = null;
+        if (kakaoUser === responseMessage.INVALID_USER) res.status(statusCode.UNAUTHORIZED).json(util.fail(statusCode.UNAUTHORIZED, responseMessage.UNAUTHORIZED_SOCIAL));
+
+        email = kakaoUser.email;
+        break;
+
+      case process.env.TEST_CASE:
+        email = token;
         break;
     }
 
