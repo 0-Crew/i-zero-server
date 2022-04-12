@@ -1,6 +1,16 @@
 const _ = require('lodash');
 const convertSnakeToCamel = require('../lib/convertSnakeToCamel');
 
+const deleteUser = async (client, userId) => {
+  const { rows } = await client.query(/*sql*/ `
+    UPDATE "user"
+    SET is_deleted = true
+    WHERE id = ${userId}
+    RETURNING *
+    `);
+  return convertSnakeToCamel.keysToCamel(rows[0]);
+};
+
 const getTest = async (client) => {
   const { rows } = await client.query(/*sql*/ `
     SELECT * FROM test
@@ -109,4 +119,4 @@ const getUserByIdFirebase = async (client, idFirebase) => {
   return convertSnakeToCamel.keysToCamel(rows[0]);
 };
 
-module.exports = { getTest, getUserBySnsIdAndProvider, getUserByIdFirebase, getUserById, addUser, checkUserName, setUserName, checkUserPrivate, toggleUserPrivate };
+module.exports = { deleteUser, getTest, getUserBySnsIdAndProvider, getUserByIdFirebase, getUserById, addUser, checkUserName, setUserName, checkUserPrivate, toggleUserPrivate };
