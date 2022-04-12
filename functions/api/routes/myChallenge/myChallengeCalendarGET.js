@@ -11,6 +11,7 @@ const responseMessage = require('../../../constants/responseMessage');
 
 module.exports = async (req, res) => {
   const { myChallengeId } = req.query;
+  if (!myChallengeId) return res.status(404).json({ err: true, userMessage: 'Not enough parameters.' });
 
   let client;
 
