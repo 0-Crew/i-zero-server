@@ -89,7 +89,7 @@ const getFollowerUsers = async (client, userId, offset, keyword) => {
     WHERE my_following.following_user_id = $1
     AND "user".id < ${offset}
     AND my_following.is_deleted = false
-    ${keyword ? `AND ("user".name ILIKE '%${keyword}%' OR "user".email ILIKE '%${keyword}%')` : ``}
+    ${keyword ? `AND ("user".name ILIKE '%${keyword}%')` : ``}
     ORDER BY "user".id DESC 
     LIMIT 10
       `,
@@ -108,7 +108,7 @@ const getFollowingUsers = async (client, userId, offset, keyword) => {
     WHERE my_following.user_id = $1
     AND "user".id < ${offset}
     AND my_following.is_deleted = false
-    ${keyword ? `AND ("user".name ILIKE '%${keyword}%' OR "user".email ILIKE '%${keyword}%')` : ``}
+    ${keyword ? `AND ("user".name ILIKE '%${keyword}%')` : ``}
     ORDER BY "user".id DESC 
     LIMIT 10
       `,
