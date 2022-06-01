@@ -11,13 +11,6 @@ const deleteUser = async (client, userId) => {
   return convertSnakeToCamel.keysToCamel(rows[0]);
 };
 
-const getTest = async (client) => {
-  const { rows } = await client.query(/*sql*/ `
-    SELECT * FROM test
-    `);
-
-  return convertSnakeToCamel.keysToCamel(rows);
-};
 const addUser = async (client, email, snsId, provider, idFirebase) => {
   const { rows } = await client.query(
     /*sql*/ `
@@ -119,4 +112,14 @@ const getUserByIdFirebase = async (client, idFirebase) => {
   return convertSnakeToCamel.keysToCamel(rows[0]);
 };
 
-module.exports = { deleteUser, getTest, getUserBySnsIdAndProvider, getUserByIdFirebase, getUserById, addUser, checkUserName, setUserName, checkUserPrivate, toggleUserPrivate };
+const getUserBySnsId = async (client, snsId, provider) => {
+  const { rows } = await client.query(/*sql*/ `
+    SELECT u.id,u.email,u.name, FROM "user" u
+    WHERE sns_id = ${snsId}
+    AND procider = ${provider}
+    AND is_deleted = false
+    `);
+  return convertSnakeToCamel.keysToCamel(rows[0]);
+};
+
+module.exports = { deleteUser, getUserBySnsIdAndProvider, getUserByIdFirebase, getUserById, addUser, checkUserName, setUserName, checkUserPrivate, toggleUserPrivate, getUserBySnsId };

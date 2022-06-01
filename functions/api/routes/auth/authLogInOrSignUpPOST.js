@@ -13,22 +13,19 @@ const jwt = require('jsonwebtoken');
 
 /*
 1. 클라이언트로부터 sns_id (소셜로그인 후 받은 값), email (소셜로그인 후 받은 이메일), provider (어떤 sns인지??) 를 받는다
-2. firebase 인증을 통해 가입된 유저인지 아닌지 파악한다
+2. sns_id, provider로 가입된 유저인지 아닌지 파악한다
 2-1. 이미 가입된 유저라면 3으로 넘어간다.
-2-2. 처음 접근하는 유저라면 Firebase Authentication에 유저를 생성하고, RDS DB에도 유저 데이터를 저장한다
-3. idFirebase가 담긴 accesstoken을 발급한다.
+2-2. 처음 접근하는 유저라면 RDS DB에 유저 데이터를 저장한다
+3. accesstoken을 발급한다.
 4. 발급된 토큰을 들고 신나게 춤춘다.
 */
 
 module.exports = async (req, res) => {
   const { token, idKey, provider } = req.body;
-
   if (!token || !idKey || !provider) {
     return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
   }
-
   let client;
-
   try {
     client = await db.connect(req);
 
