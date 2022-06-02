@@ -10,7 +10,7 @@ const options = {
   issuer: 'WYB',
 };
 
-// id, email, name, idFirebase가 담긴 JWT를 발급합니다.
+// id, email, name가 담긴 JWT를 발급합니다.
 const sign = (user) => {
   const payload = {
     id: user.id,

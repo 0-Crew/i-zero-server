@@ -33,9 +33,9 @@ const checkUser = async (req, res, next) => {
       user = await userDB.getUserById(client, id);
     } else {
       const decodedToken = jwtHandlers.verify(token);
-      const idFirebase = decodedToken.idFirebase;
+      const id = decodedToken.id;
 
-      user = await userDB.getUserByIdFirebase(client, idFirebase);
+      user = await userDB.getUserById(client, id);
     }
 
     if (!user) return res.status(401).send(util.fail(statusCode.UNAUTHORIZED, responseMessage.NO_USER));

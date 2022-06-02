@@ -29,8 +29,6 @@ module.exports = async (req, res) => {
   try {
     client = await db.connect(req);
 
-    let loginSuccess;
-    let idFirebase;
     let user;
     let email;
     let type;
@@ -56,62 +54,16 @@ module.exports = async (req, res) => {
         break;
     }
 
-    // const appleAccessToken =
-    //   'eyJraWQiOiJlWGF1bm1MIiwiYWxnIjoiUlMyNTYifQ.eyJpc3MiOiJodHRwczovL2FwcGxlaWQuYXBwbGUuY29tIiwiYXVkIjoiY29tLnRlYW1aZXJvLldZQiIsImV4cCI6MTY0NTYzMDIyMSwiaWF0IjoxNjQ1NTQzODIxLCJzdWIiOiIwMDA2ODQuZjg1OTBhZTczN2Q3NGZhNWFkNGE1MTIwYjA0MzI5OTEuMTcxOCIsImNfaGFzaCI6Ii1lS3E3eHJOR2c5enBEMHRJYTJVRFEiLCJlbWFpbCI6Ink0dXJ0aWpuZmpAcHJpdmF0ZXJlbGF5LmFwcGxlaWQuY29tIiwiZW1haWxfdmVyaWZpZWQiOiJ0cnVlIiwiaXNfcHJpdmF0ZV9lbWFpbCI6InRydWUiLCJhdXRoX3RpbWUiOjE2NDU1NDM4MjEsIm5vbmNlX3N1cHBvcnRlZCI6dHJ1ZX0.kBFV4_sOkk8htweZv-A9VEBs9bWMYYuYeBeBAr1KR1ToMHxG5Ph9vGCigf0S8TUujJIN0mYI0HYY7SDpabx0uNGCip40hGclt0n6FlcYXe5J6SxeXETeznAYJrPGRs6qAowk8fbZozMK0h5xMSrmGiZLwW6CXpoYpvRvOjacx1RbxNfcjchwjF0qAXviPiIC5z_mNOPdnJQuI4GWZfwu8mpsNUD0S8WvAwcTkP2a7jS76BeG40MS7eLHYB0GYKdVr21hJrvz021whGE1BLWvghSl6M4QTKU3AzlaI1ClNqp4zHSA9AVt195ThqCtEhbpZ1L7iQCrwMd98SKJihwGzw';
-    // const appleUser = jwt.decode(appleAccessToken);
-    // console.log('appleUser : \n', appleUser);
-
-    // firsbase에서 로그인 인증
-    const userFirebase = await signInWithEmailAndPassword(firebaseAuth, email, idKey)
-      .then((user) => user)
-      .catch((e) => {
-        console.log(e);
-        return { err: true, error: e };
-      });
-
-    if (userFirebase.err) {
-      if (userFirebase.error.code === 'auth/user-not-found') {
-        console.log('firebase 인증실패!');
-        loginSuccess = false;
-      } else if (userFirebase.error.code === 'auth/invalid-email') {
-        return res.status(statusCode.NOT_FOUND).json(util.fail(statusCode.UNAUTHORIZED, responseMessage.INVALID_EMAIL));
-      } else if (userFirebase.error.code === 'auth/wrong-password') {
-        return res.status(statusCode.NOT_FOUND).json(util.fail(statusCode.UNAUTHORIZED, responseMessage.MISS_MATCH_PW));
-      } else {
-        return res.status(statusCode.INTERNAL_SERVER_ERROR).json(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
-      }
-    }
-
-    // firebase 인증 후, 계정이 없다는 err를 만난 경우! -> 회원가입을 시켜야한다.
-    if (loginSuccess === false) {
+    const checkedUser = await userDB.getUserBySnsIdAndProvider(client, idKey, provider);
+    // 계정이 없는 경우! -> 회원가입을 시켜야한다.
+    if (!checkedUser) {
       type = 'signUp';
-      // 처음 로그인 시도를 하는 유저
-      // Firebase Authentication을 통해 유저를 생성!!
-      const newUserFirebase = await admin
-        .auth()
-        .createUser({ email, password: idKey })
-        .then((user) => user)
-        .catch((e) => {
-          console.log(e);
-          return { err: true, error: e };
-        });
-      // error handling (거의 없을듯)
-      if (newUserFirebase.err) {
-        if (newUserFirebase.error.code === 'auth/email-already-exists') {
-          return res.status(statusCode.NOT_FOUND).json(util.fail(statusCode.NOT_FOUND, '해당 이메일을 가진 유저가 이미 있습니다.'));
-        } else {
-          return res.status(statusCode.INTERNAL_SERVER_ERROR).json(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));
-        }
-      }
+
       //RDS DB에 유저를 생성한다
-      idFirebase = newUserFirebase.uid;
-      user = await userDB.addUser(client, email, idKey, provider, idFirebase);
+      user = await userDB.addUser(client, email || null, idKey, provider);
     } else {
       type = 'login';
-      // Firebase 인증이 된 경우라면 RDS의 userDB에서 유저 정보를 찾는다.
-      idFirebase = userFirebase.user.uid;
-      const isExist = await userDB.getUserByIdFirebase(client, idFirebase);
-      user = isExist;
+      user = checkedUser;
     }
 
     // JWT access token 발급
