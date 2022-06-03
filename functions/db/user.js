@@ -87,12 +87,16 @@ const getUserById = async (client, userId) => {
 };
 
 const getUserBySnsIdAndProvider = async (client, snsId, provider) => {
-  const { rows } = await client.query(/*sql*/ `
-    SELECT u.id,u.email,u.name, FROM "user" u
-    WHERE sns_id = ${snsId}
-    AND provider = ${provider}
-    AND is_deleted = false
-    `);
+  const { rows } = await client.query(
+    /*sql*/ `
+    SELECT id,email,name 
+    FROM "user" 
+    WHERE sns_id = $1
+    AND provider = $2
+    AND  is_deleted = false
+    `,
+    [snsId, provider],
+  );
   return convertSnakeToCamel.keysToCamel(rows[0]);
 };
 
