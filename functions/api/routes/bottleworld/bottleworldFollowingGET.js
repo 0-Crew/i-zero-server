@@ -18,11 +18,9 @@ module.exports = async (req, res) => {
       offset = 999999;
     }
     const followingUsers = await myFollowingDB.getFollowingUsers(client, user.id, offset, keyword);
-    // console.log('followings : ', followingUsers);
 
     if (followingUsers.length != 0) {
       const userIds = arrayHandlers.extractValues(followingUsers, 'id');
-      // console.log('userIds : ', userIds);
 
       const userChallenges = await myChallengeDB.getUsersChallenge(client, userIds);
       console.log('userChallenges : ', userChallenges);
@@ -31,7 +29,6 @@ module.exports = async (req, res) => {
         acc[x.id] = { user: { ...x }, challenge: {}, follow: true };
         return acc;
       }, {});
-      // console.log('challengesForUsers :', challengesForUsers);
 
       //  userId로 그룹화 해준 유저 정보들에 challenge를 넣어준다.
       userChallenges.map((o) => {

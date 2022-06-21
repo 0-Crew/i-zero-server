@@ -12,8 +12,8 @@ module.exports = async (req, res) => {
     client = await db.connect(req);
     const data = {};
 
-    /**
-     * my notification DB 조회
+    /** my notification DB 조회
+     *
      * notification_id 로 JOIN
      * user_id, challenger_user_id 를 user table과 조인
      * is_deleted false 인 것만 조회
@@ -22,6 +22,7 @@ module.exports = async (req, res) => {
      * 24*7시간이 지난 id 값만 모아서, 해당 noti를 soft delete 해준다.
      *
      */
+
     return res.status(statusCode.OK).send(util.success(statusCode.OK, '내 노티 불러오기 뭐시깽이 성공', data));
   } catch (error) {
     // 서버 에러시 500 return
