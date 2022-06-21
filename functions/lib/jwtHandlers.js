@@ -4,13 +4,20 @@ const { TOKEN_INVALID, TOKEN_EXPIRED } = require('../constants/jwt');
 
 // JWT를 발급/인증할 떄 필요한 secretKey를 설정합니다. 값은 .env로부터 불러옵니다.
 const secretKey = process.env.JWT_SECRET;
-const options = {
+
+const accessOptions = {
+  algorithm: 'HS256',
+  expiresIn: '6h',
+  issuer: 'WYB',
+};
+
+const refreshOptions = {
   algorithm: 'HS256',
   expiresIn: '30d',
   issuer: 'WYB',
 };
 
-// id, email, name가 담긴 JWT를 발급합니다.
+// id, email, name가 담긴 access JWT를 발급합니다.
 const sign = (user) => {
   const payload = {
     id: user.id,
@@ -19,9 +26,19 @@ const sign = (user) => {
   };
 
   const result = {
-    accesstoken: jwt.sign(payload, secretKey, options),
+    accesstoken: jwt.sign(payload, secretKey, accessOptions),
   };
   return result;
+};
+// snsId, provider가 담긴 refresh JWT를 발급합니다.
+const refresh = (user) => {
+  const payload = {
+    sns_id: user.snsId,
+    provider: user.provider,
+  };
+
+  const refreshtoken = jwt.sign(payload, secretKey, refreshOptions);
+  return refreshtoken;
 };
 
 // JWT를 해독하고, 해독한 JWT가 우리가 만든 JWT가 맞는지 확인합니다 (인증).
@@ -38,11 +55,11 @@ const verify = (token) => {
       console.log('invalid token');
       functions.logger.error('invalid token');
       return TOKEN_INVALID;
-    } else {
-      console.log('invalid token');
-      functions.logger.error('invalid token');
-      return TOKEN_INVALID;
     }
+
+    console.log('invalid token');
+    functions.logger.error('invalid token');
+    return TOKEN_INVALID;
   }
   // 해독 / 인증이 완료되면, 해독된 상태의 JWT를 반환합니다.
   return decoded;
@@ -50,5 +67,6 @@ const verify = (token) => {
 
 module.exports = {
   sign,
+  refresh,
   verify,
 };
