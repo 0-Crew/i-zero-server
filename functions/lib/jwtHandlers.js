@@ -25,10 +25,8 @@ const sign = (user) => {
     name: user.name || null,
   };
 
-  const result = {
-    accesstoken: jwt.sign(payload, secretKey, accessOptions),
-  };
-  return result;
+  const accesstoken = jwt.sign(payload, secretKey, accessOptions);
+  return accesstoken;
 };
 // snsId, provider가 담긴 refresh JWT를 발급합니다.
 const refresh = (user) => {

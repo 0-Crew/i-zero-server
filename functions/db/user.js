@@ -100,4 +100,17 @@ const getUserBySnsIdAndProvider = async (client, snsId, provider) => {
   return convertSnakeToCamel.keysToCamel(rows[0]);
 };
 
-module.exports = { deleteUser, getUserBySnsIdAndProvider, getUserById, addUser, checkUserName, setUserName, checkUserPrivate, toggleUserPrivate };
+const setRefreshToken = async (client, userId, refreshToken) => {
+  const { rows } = await client.query(
+    /*sql*/ `
+    UPDATE "user"
+    SET "refresh_token" = $1
+    WHERE "user".id = $2
+    AND is_deleted = false
+    `,
+    [refreshToken, userId],
+  );
+  return convertSnakeToCamel.keysToCamel(rows[0]);
+};
+
+module.exports = { deleteUser, getUserBySnsIdAndProvider, getUserById, addUser, checkUserName, setUserName, checkUserPrivate, toggleUserPrivate, setRefreshToken };

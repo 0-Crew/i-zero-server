@@ -67,9 +67,12 @@ module.exports = async (req, res) => {
     }
 
     // JWT access token 발급
-    const { accesstoken } = jwtHandlers.sign(user);
+    const accesstoken = jwtHandlers.sign(user);
+    // JWT refresh token 발급
+    const refreshtoken = jwtHandlers.refresh({ snsId: idKey, provider });
 
-    res.status(statusCode.OK).send(util.success(statusCode.OK, type == 'login' ? responseMessage.LOGIN_SUCCESS : responseMessage.CREATED_USER, { type, accesstoken }));
+    await userDB.setRefreshToken(client, user.id, refreshtoken);
+    res.status(statusCode.OK).send(util.success(statusCode.OK, type == 'login' ? responseMessage.LOGIN_SUCCESS : responseMessage.CREATED_USER, { type, accesstoken, refreshtoken }));
   } catch (error) {
     functions.logger.error(`[ERROR] [${req.method.toUpperCase()}] ${req.originalUrl}`, `[CONTENT] ${error}`);
     console.log(error);
