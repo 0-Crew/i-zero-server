@@ -41,10 +41,11 @@ module.exports = async (req, res) => {
     /**
      * toggledRelation의 true/false에 따라서 true일 경우앤 내가 받을 알림, 팔로잉하는 유저가 받을 알림. 이 두 row를 생성한다.
      * 취소 했다가 다시 생성한다면 새로운 row를 그냥 추가해주는걸로 작업함
+     *  ==> 아니다 마음 바꿈. 만약 다시 생성한거면 추가 rows 없는걸로. 이거 pm과 이야기해서 정해야할듯
      * */
-    if (toggledRelation) {
-      await myNotificationDB.addFollowingNotification(client, user.id, followingUserId);
-    }
+    // if (toggledRelation) {
+    //   await myNotificationDB.addFollowingNotification(client, user.id, followingUserId);
+    // }
     return res.status(statusCode.OK).send(util.success(statusCode.OK, toggledRelation ? responseMessage.UNFOLLOW_SUCCESS : responseMessage.FOLLOW_SUCCESS));
   } catch (error) {
     // 서버 에러시 500 return
