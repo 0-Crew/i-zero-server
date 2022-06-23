@@ -4,10 +4,11 @@ const dayjs = require('dayjs');
 const numeral = require('numeral');
 
 const db = require('../../../db/db');
-const { myChallengeDB, myInconvenienceDB, inconvenienceDB } = require('../../../db');
+const { myChallengeDB, myInconvenienceDB, inconvenienceDB, myNotificationDB, myFollowingDB } = require('../../../db');
 const statusCode = require('../../../constants/statusCode');
 const util = require('../../../lib/util');
 const responseMessage = require('../../../constants/responseMessage');
+const arrayHandlers = require('../../../lib/arrayHandlers');
 
 module.exports = async (req, res) => {
   const { convenienceString, inconvenienceString, isfromToday } = req.body;
@@ -21,6 +22,11 @@ module.exports = async (req, res) => {
     const myChallenge = await myChallengeDB.addMyChallenge(client, convenienceString, isfromToday, req.user.id);
     console.log(`myChallenge`, myChallenge);
     const myInconveniences = await myInconvenienceDB.addMyInonveniences(client, inconvenienceString, req.user.id, myChallenge.id);
+
+    // 내 팔로워들을 조회
+    const folloewerIds = arrayHandlers.extractValues(await myFollowingDB.getFollowerUserIds(client, req.user.id), 'id');
+    // 해당 팔로워들에 해당하는 알림 row 생성
+    await myNotificationDB.addChallengeStartNotification(client, req.user.id, folloewerIds);
     await client.query('COMMIT');
 
     let data = {
