@@ -148,6 +148,21 @@ const getFollowBackUsers = async (client, userId, userIds) => {
   rows = arrayHandlers.extractValues(rows, 'following_user_id');
   return convertSnakeToCamel.keysToCamel(rows);
 };
+
+const getFollowerUserIds = async (client, userId) => {
+  const { rows } = await client.query(
+    /*sql*/ `
+    SELECT "user".id
+    FROM my_following
+      LEFT JOIN "user" ON "user".id = my_following.user_id
+    WHERE my_following.following_user_id = $1
+    AND my_following.is_deleted = false
+      `,
+    [userId],
+  );
+  return convertSnakeToCamel.keysToCamel(rows);
+};
+
 module.exports = {
   checkFollowing,
   addFollowingUser,
@@ -159,4 +174,5 @@ module.exports = {
   getFollowBackUsers,
   checkIsFollowing,
   getFollowingUsersForMain,
+  getFollowerUserIds,
 };
