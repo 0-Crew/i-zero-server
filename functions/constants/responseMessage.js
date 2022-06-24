@@ -41,13 +41,16 @@ module.exports = {
   NO_FOLLOWINGS: '보틀월드 팔로잉 없음',
   GET_BROWSE_SUCCESS: '보틀월드 둘러보기 조회 성공',
   NO_BROWSE_RESULT: '보틀월드 둘러보기 결과 없음',
+  INVALID_BUTTON_TYPE: '유효하지 않은 버튼 타입',
+  CONGRATS_SUCCESS: '축하 성공',
+  CHEER_SUCCESS: '응원 성공',
 
   // Setting
   READ_USER_PRIVATE: '유저 둘러보기 공개 여부 조회 성공',
   TOGGLE_USER_PRIVATE: '유저 둘러보기 공개 여부 수정 성공',
   GET_USER_FOR_SETTING: '세팅 뷰 유저 정보 조회 성공',
 
-  // poisting
+  // posting
   READ_ALL_POSTS: '모든 게시글 조회 성공',
   READ_POST: '게시글 조회 성공',
   POST_POST: '게시글 생성 성공',
