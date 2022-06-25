@@ -28,18 +28,16 @@ const addChallengeStartNotification = async (client, userId, followingUserIds) =
   return convertSnakeToCamel.keysToCamel(rows);
 };
 
-const addButtonNotification = async (client, userId, followingUserId, notiType) => {
-  const valuesQuery = `('1',${userId},${followingUserId}),(2,${followingUserId},${userId})`;
-
+const addButtonNotification = async (client, userId, receiverUserId, notiType) => {
   const { rows } = await client.query(
     /*sql*/ `
       INSERT INTO my_notification(notification_id,user_id,receiver_user_id)
-      VALUES `($1, $2, $3)`
+      VALUES ($1, $2, $3)
       `,
-    [notiType, userId, followingUserId],
+    [notiType, userId, receiverUserId],
   );
 
-  return convertSnakeToCamel.keysToCamel(rows);
+  return convertSnakeToCamel.keysToCamel(rows[0]);
 };
 
 module.exports = { addFollowingNotification, addChallengeStartNotification, addButtonNotification };
