@@ -25,6 +25,7 @@ module.exports = async (req, res) => {
 
     // 내 팔로워들을 조회
     const folloewerIds = arrayHandlers.extractValues(await myFollowingDB.getFollowerUserIds(client, req.user.id), 'id');
+    console.log('folloewerIds : ', folloewerIds);
     // 해당 팔로워들에 해당하는 알림 row 생성
     await myNotificationDB.addChallengeStartNotification(client, req.user.id, folloewerIds);
     await client.query('COMMIT');
