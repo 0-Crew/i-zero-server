@@ -13,6 +13,7 @@ const addFollowingNotification = async (client, userId, followingUserId) => {
 };
 
 const addChallengeStartNotification = async (client, userId, followingUserIds) => {
+  if (followingUserIds.length === 0) return [];
   const valuesQuery = Object.values(
     followingUserIds.reduce((acc, cur, index) => {
       acc[index] = `(3,${userId},${cur})`;

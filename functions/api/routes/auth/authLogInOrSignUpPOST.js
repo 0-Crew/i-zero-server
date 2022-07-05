@@ -56,7 +56,7 @@ module.exports = async (req, res) => {
 
     const checkedUser = await userDB.getUserBySnsIdAndProvider(client, idKey, provider);
     // 계정이 없는 경우! -> 회원가입을 시켜야한다.
-    if (!checkedUser) {
+    if (!checkedUser || !checkedUser.name) {
       type = 'signUp';
 
       //RDS DB에 유저를 생성한다
