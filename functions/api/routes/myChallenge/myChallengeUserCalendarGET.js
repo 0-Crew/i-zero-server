@@ -10,23 +10,26 @@ const util = require('../../../lib/util');
 const responseMessage = require('../../../constants/responseMessage');
 
 module.exports = async (req, res) => {
-  const { myChallengeId } = req.query;
+  const { myChallengeId, userId } = req.query;
+
+  if (!userId) return res.status(404).json({ err: true, userMessage: 'Not enough parameters. Missed userId.' });
 
   let client;
 
   try {
     client = await db.connect(req);
     let myChallenge;
-    const myChallenges = await myChallengeDB.getMyChallenges(client, req.user.id);
+    const myChallenges = await myChallengeDB.getMyChallenges(client, userId);
     if (myChallengeId) {
       myChallenge = await myChallengeDB.getMyChallengeById(client, myChallengeId);
     } else {
-      myChallenge = await myChallengeDB.getNowMyChallenge(client, req.user.id);
+      myChallenge = await myChallengeDB.getNowMyChallenge(client, userId);
     }
     let myInconveniences;
     if (myChallenge) {
       myInconveniences = await myInconvenienceDB.getMyInconvenicencesByMyChallengeId(client, myChallenge.id);
     }
+
     let data = {
       myChallenges,
       selectedChallenge: { myChallenge, myInconveniences },

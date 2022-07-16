@@ -72,7 +72,8 @@ const getMyInconveniencesForBrowse = async (client, offset, keyword) => {
         }
             ) i ON u.id = i.user_id
     WHERE u.is_deleted = false and u.is_private = false
-    ${keyword ? `AND (u.name ILIKE '%${keyword}%' OR u.email ILIKE '%${keyword}%')` : ``}
+    -- ${keyword ? `AND (u.name ILIKE '%${keyword}%' OR u.email ILIKE '%${keyword}%')` : ``}
+    ${keyword ? `AND (u.name ILIKE '%${keyword}%')` : ``}
     ORDER BY i."updated_at"  DESC
     LIMIT 10
     `);
