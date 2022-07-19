@@ -13,4 +13,4 @@ ORDER BY my_notification.created_at DESC;
   return convertSnakeToCamel.keysToCamel(rows);
 };
 
-module.exports = { getMyNotifications };
+module.exports = { getNotifications };

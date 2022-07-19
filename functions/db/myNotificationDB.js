@@ -3,12 +3,12 @@ const convertSnakeToCamel = require('../lib/convertSnakeToCamel');
 
 const getMyNotificationsByReceiverUserId = async (client, receiverUserId) => {
   const { rows } = await client.query(/*sql*/ `
-     SELECT my_notification.*
+SELECT my_notification.*,notification.is_button_enabled,notification.content,notification.button_text,notification.name as notification_name
 FROM my_notification
+JOIN notification on my_notification.notification_id = notification.id
 WHERE my_notification.receiver_user_id = ${receiverUserId}
     AND my_notification.is_deleted = FALSE
-ORDER BY my_notification.created_at DESC;
-        `);
+ORDER BY my_notification.created_at DESC;`);
   return convertSnakeToCamel.keysToCamel(rows);
 };
 
