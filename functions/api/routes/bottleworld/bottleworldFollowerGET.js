@@ -38,10 +38,17 @@ module.exports = async (req, res) => {
       // console.log('challengesForUsers : ', challengesForUsers);
 
       //  userId로 그룹화 해준 유저 정보들에 challenge를 넣어준다.
-      userChallenges.map((o) => {
-        challengesForUsers[o.userId].challenge = o;
-        return o;
-      });
+      console.log('userChallenges', userChallenges);
+      if (userChallenges.length != 0) {
+        userChallenges.map((o) => {
+          console.log('??', o);
+          challengesForUsers[o.userId].challenge = o;
+          return o;
+        });
+      } else {
+        console.log('challengesForUsers?? ', challengesForUsers);
+        // delete challengesForUsers.firstname;
+      }
       // console.log('challengesForUsers22 : ', challengesForUsers);
 
       // followBack 여부에 따라 값을 처리해준다.
@@ -53,6 +60,12 @@ module.exports = async (req, res) => {
       });
 
       result = Object.entries(challengesForUsers).map(([key, value]) => ({ ...value }));
+
+      result.map((o) => {
+        if (Object.keys(o.challenge).length === 0) {
+          delete o.challenge;
+        }
+      });
     } else {
       console.log('follower 없음');
       result = [];

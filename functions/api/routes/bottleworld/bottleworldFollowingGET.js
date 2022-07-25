@@ -30,6 +30,8 @@ module.exports = async (req, res) => {
         return acc;
       }, {});
 
+      console.log('userChallenges', userChallenges);
+
       //  userId로 그룹화 해준 유저 정보들에 challenge를 넣어준다.
       userChallenges.map((o) => {
         console.log('o :', o);
@@ -40,6 +42,12 @@ module.exports = async (req, res) => {
       // console.log('challengesForUsers22 : ', challengesForUsers);
 
       result = Object.entries(challengesForUsers).map(([key, value]) => ({ ...value }));
+      result.map((o) => {
+        if (Object.keys(o.challenge).length === 0) {
+          delete o.challenge;
+        }
+      });
+
       // console.log('result : ', result);
     } else {
       console.log('following 없음 ');
