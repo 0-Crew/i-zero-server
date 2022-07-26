@@ -58,6 +58,11 @@ module.exports = async (req, res) => {
       });
 
       result = Object.entries(challengesForUsers).map(([key, value]) => ({ ...value }));
+      result.map((o) => {
+        if (Object.keys(o.challenge).length === 0) {
+          delete o.challenge;
+        }
+      });
       // console.log('result : ', result);
     } else {
       console.log('둘러보기 해당 user 없음');
