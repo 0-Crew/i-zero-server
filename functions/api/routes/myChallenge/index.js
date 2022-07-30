@@ -9,5 +9,6 @@ router.get('/user', checkUser, require('./myChallengeUserGET'));
 router.get('/user/calendar', checkUser, require('./myChallengeUserCalendarGET'));
 
 router.get('/calendar', checkUser, require('./myChallengeCalendarGET'));
+router.put('/main', checkUser, require('./myChallengeFinishPUT'));
 
 module.exports = router;
