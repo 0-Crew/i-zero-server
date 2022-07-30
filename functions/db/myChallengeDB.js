@@ -20,6 +20,7 @@ const getNowMyChallenge = async (client, userId) => {
     WHERE user_id = ${userId}
       AND now() BETWEEN created_at AND created_at + interval '7 day'
       AND is_deleted = false
+      AND is_finished = false
     ORDER BY created_at DESC
 
     `);
@@ -61,4 +62,15 @@ const getUsersChallenge = async (client, userIds) => {
   return convertSnakeToCamel.keysToCamel(rows);
 };
 
-module.exports = { getNowMyChallenge, addMyChallenge, getMyChallenges, getMyChallengeById, getUsersChallenge };
+const finishMyChanllengeByMyChallengeId = async (client, myChallengeId) => {
+  const { rows } = await client.query(/*sql*/ `
+    UPDATE my_challenge
+    SET is_finished = true
+    WHERE id = ${myChallengeId}
+    AND is_deleted = false
+    RETURNING *
+      `);
+  return convertSnakeToCamel.keysToCamel(rows[0]);
+};
+
+module.exports = { getNowMyChallenge, addMyChallenge, getMyChallenges, getMyChallengeById, getUsersChallenge, finishMyChanllengeByMyChallengeId };
