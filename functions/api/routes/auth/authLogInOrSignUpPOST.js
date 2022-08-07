@@ -21,7 +21,7 @@ const jwt = require('jsonwebtoken');
 */
 
 module.exports = async (req, res) => {
-  const { token, idKey, provider } = req.body;
+  const { token, idKey, provider, authorizationCode } = req.body;
   if (!token || !idKey || !provider) {
     return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
   }
@@ -60,7 +60,7 @@ module.exports = async (req, res) => {
       type = 'signUp';
 
       //RDS DB에 유저를 생성한다
-      user = await userDB.addUser(client, email || null, idKey, provider);
+      user = await userDB.addUser(client, email || null, idKey, provider, authorizationCode || null);
     } else {
       type = 'login';
       user = checkedUser;

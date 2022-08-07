@@ -11,14 +11,14 @@ const deleteUser = async (client, userId) => {
   return convertSnakeToCamel.keysToCamel(rows[0]);
 };
 
-const addUser = async (client, email, snsId, provider) => {
+const addUser = async (client, email, snsId, provider, authorizationCode) => {
   const { rows } = await client.query(
     /*sql*/ `
-    INSERT INTO "user"(email,sns_id,provider)
-    VALUES($1,$2,$3)
+    INSERT INTO "user"(email,sns_id,provider,authorization_code)
+    VALUES($1,$2,$3,$4)
     RETURNING *
     `,
-    [email, snsId, provider],
+    [email, snsId, provider, authorizationCode],
   );
 
   return convertSnakeToCamel.keysToCamel(rows[0]);
