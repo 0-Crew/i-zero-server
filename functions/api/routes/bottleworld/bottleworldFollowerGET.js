@@ -11,14 +11,20 @@ module.exports = async (req, res) => {
   let { offset } = req.query;
   let client;
   let result;
-
+  let data;
   try {
     client = await db.connect(req);
     if (!offset) {
       offset = 999999;
     }
+
+    const countFollower = await myFollowingDB.countFollower(client, user.id);
+    const countFollowing = await myFollowingDB.countFollowing(client, user.id);
+
+    const count = { countFollower: Number(countFollower.count), countFollowing: Number(countFollowing.count) };
+
     const followerUsers = await myFollowingDB.getFollowerUsers(client, user.id, offset, keyword);
-    console.log('followers : ', followerUsers);
+    // console.log('followers : ', followerUsers);
 
     const userIds = arrayHandlers.extractValues(followerUsers, 'id');
     // console.log('userIds : ', userIds);
@@ -41,7 +47,7 @@ module.exports = async (req, res) => {
       console.log('userChallenges', userChallenges);
       if (userChallenges.length != 0) {
         userChallenges.map((o) => {
-          console.log('??', o);
+          // console.log('??', o);
           challengesForUsers[o.userId].challenge = o;
           return o;
         });
@@ -49,7 +55,6 @@ module.exports = async (req, res) => {
         console.log('challengesForUsers?? ', challengesForUsers);
         // delete challengesForUsers.firstname;
       }
-      // console.log('challengesForUsers22 : ', challengesForUsers);
 
       // followBack 여부에 따라 값을 처리해준다.
       getFollowBackUsersForFollower.map((o) => {
@@ -66,12 +71,14 @@ module.exports = async (req, res) => {
           delete o.challenge;
         }
       });
+
+      data = { followers: result, count };
     } else {
       console.log('follower 없음');
-      result = [];
+      data = { followers: [], count };
     }
 
-    return res.status(statusCode.OK).send(util.success(statusCode.OK, followerUsers.length != 0 ? responseMessage.GET_FOLLOWERS_SUCCESS : responseMessage.NO_FOLLOWERS, result));
+    return res.status(statusCode.OK).send(util.success(statusCode.OK, followerUsers.length != 0 ? responseMessage.GET_FOLLOWERS_SUCCESS : responseMessage.NO_FOLLOWERS, data));
   } catch (error) {
     // 서버 에러시 500 return
     res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));

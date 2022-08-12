@@ -47,7 +47,7 @@ const getMyInconvenicencesByMyChallengeId = async (client, myChallengeId) => {
   return convertSnakeToCamel.keysToCamel(rows);
 };
 
-const getMyInconveniencesForBrowse = async (client, offset, keyword) => {
+const getMyInconveniencesForBrowse = async (client, offset, keyword, userId) => {
   // const { rows } = await client.query(/*sql*/ `
   //   SELECT my_inconvenience.updated_at, my_inconvenience.name, my_inconvenience.user_id FROM my_inconvenience
   //   WHERE is_deleted = false
@@ -71,7 +71,7 @@ const getMyInconveniencesForBrowse = async (client, offset, keyword) => {
             : ``
         }
             ) i ON u.id = i.user_id
-    WHERE u.is_deleted = false and u.is_private = false
+    WHERE u.is_deleted = false and u.is_private = false and u.id != ${userId}
     -- ${keyword ? `AND (u.name ILIKE '%${keyword}%' OR u.email ILIKE '%${keyword}%')` : ``}
     ${keyword ? `AND (u.name ILIKE '%${keyword}%')` : ``}
     ORDER BY i."updated_at"  DESC

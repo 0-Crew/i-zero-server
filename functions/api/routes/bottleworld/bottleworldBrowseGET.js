@@ -20,7 +20,7 @@ module.exports = async (req, res) => {
   try {
     client = await db.connect(req);
 
-    const myInconveniencesForBrowse = await myInconvenienceDB.getMyInconveniencesForBrowse(client, offset, keyword);
+    const myInconveniencesForBrowse = await myInconvenienceDB.getMyInconveniencesForBrowse(client, offset, keyword, user.id);
     // console.log('myInconveniencesForBrowse', myInconveniencesForBrowse);
 
     // const followingUsers = await myFollowingDB.getFollowingUsers(client, user.id, keyword);
