@@ -14,7 +14,7 @@ module.exports = async (req, res) => {
     const countFollowing = await myFollowingDB.countFollowing(client, user.id);
 
     const data = { countFollower: Number(countFollower.count), countFollowing: Number(countFollowing.count) };
-    console.log('countFollower : ', countFollower, 'countFollowing :', countFollowing, 'data :', data);
+    // console.log('countFollower : ', countFollower, 'countFollowing :', countFollowing, 'data :', data);
 
     return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.GET_FILTER_SUCCESS, data));
   } catch (error) {

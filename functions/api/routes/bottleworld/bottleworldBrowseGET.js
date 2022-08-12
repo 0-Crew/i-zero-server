@@ -16,9 +16,15 @@ module.exports = async (req, res) => {
 
   let client;
   let result;
+  let data;
 
   try {
     client = await db.connect(req);
+
+    const countFollower = await myFollowingDB.countFollower(client, user.id);
+    const countFollowing = await myFollowingDB.countFollowing(client, user.id);
+
+    const count = { follower: Number(countFollower.count), following: Number(countFollowing.count) };
 
     const myInconveniencesForBrowse = await myInconvenienceDB.getMyInconveniencesForBrowse(client, offset, keyword, user.id);
     // console.log('myInconveniencesForBrowse', myInconveniencesForBrowse);
@@ -63,13 +69,13 @@ module.exports = async (req, res) => {
           delete o.challenge;
         }
       });
-      // console.log('result : ', result);
+      data = { users: result, count };
     } else {
       console.log('둘러보기 해당 user 없음');
-      result = [];
+      data = { users: [], count };
     }
 
-    return res.status(statusCode.OK).send(util.success(statusCode.OK, myInconveniencesForBrowse.length != 0 ? responseMessage.GET_BROWSE_SUCCESS : responseMessage.NO_BROWSE_RESULT, result));
+    return res.status(statusCode.OK).send(util.success(statusCode.OK, myInconveniencesForBrowse.length != 0 ? responseMessage.GET_BROWSE_SUCCESS : responseMessage.NO_BROWSE_RESULT, data));
   } catch (error) {
     // 서버 에러시 500 return
     res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INTERNAL_SERVER_ERROR));

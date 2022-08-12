@@ -23,7 +23,7 @@ module.exports = async (req, res) => {
     const countFollower = await myFollowingDB.countFollower(client, user.id);
     const countFollowing = await myFollowingDB.countFollowing(client, user.id);
 
-    const count = { countFollower: Number(countFollower.count), countFollowing: Number(countFollowing.count) };
+    const count = { follower: Number(countFollower.count), following: Number(countFollowing.count) };
 
     const followingUsers = await myFollowingDB.getFollowingUsers(client, user.id, offset, keyword);
 
@@ -56,10 +56,10 @@ module.exports = async (req, res) => {
         }
       });
 
-      data = { followers: result, count };
+      data = { followings: result, count };
     } else {
       console.log('following 없음 ');
-      data = { followers: [], count };
+      data = { followings: [], count };
     }
 
     return res.status(statusCode.OK).send(util.success(statusCode.OK, followingUsers.length != 0 ? responseMessage.GET_FOLLOWINGS_SUCCESS : responseMessage.NO_FOLLOWINGS, data));

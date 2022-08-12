@@ -21,7 +21,7 @@ module.exports = async (req, res) => {
     const countFollower = await myFollowingDB.countFollower(client, user.id);
     const countFollowing = await myFollowingDB.countFollowing(client, user.id);
 
-    const count = { countFollower: Number(countFollower.count), countFollowing: Number(countFollowing.count) };
+    const count = { follower: Number(countFollower.count), following: Number(countFollowing.count) };
 
     const followerUsers = await myFollowingDB.getFollowerUsers(client, user.id, offset, keyword);
     // console.log('followers : ', followerUsers);
