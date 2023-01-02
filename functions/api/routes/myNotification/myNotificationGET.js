@@ -37,7 +37,7 @@ module.exports = async (req, res) => {
         notiText: usersById[x.userId].name + x.content,
         sentUser: usersById[x.userId],
       }));
-    }
+    } 
 
     console.log('myNotifications', myNotifications);
     let data = { myNotifications };
