@@ -23,15 +23,15 @@ module.exports = async (req, res) => {
     };
     await client.query(`COMMIT`);
     if (user.provider === 'apple') {
-      // const appleUser = await appleAuth(token);
-      // const appleuser = await axios({
-      //   method: 'POST',
-      //   url: 'https://appleid.apple.com/auth/token',
-      //   headers: {
-      //     'Content-Type': 'application/x-www-form-urlencoded',
-      //   },
-      //   body: JSON.stringify({ client_id: 'com.teamZero.WYB', client_secret: 2, grant_type: 'refresh_token', refresh_token: '' }),
-      // });
+      const appleUser = await appleAuth(token);
+      const appleuser = await axios({
+        method: 'POST',
+        url: 'https://appleid.apple.com/auth/token',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: JSON.stringify({ client_id: 'com.teamZero.WYB', client_secret: 2, grant_type: 'refresh_token', refresh_token: '' }),
+      });
       const lists = await axios({
         method: 'POST',
         url: 'https://appleid.apple.com/auth/revoke',
